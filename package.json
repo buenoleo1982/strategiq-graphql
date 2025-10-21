@@ -42,5 +42,6 @@
     "prisma": "^6.17.1",
     "typescript": "^5",
     "vitest": "^3.2.4"
-  }
+  },
+  "packageManager": "bun@1.2.22"
 }
