@@ -1,4 +1,3 @@
-import type { BaseContext, GraphQLRequestContext, GraphQLRequestListener } from '@apollo/server'
 import { ApolloServer } from '@apollo/server'
 import { fastifyApolloDrainPlugin, fastifyApolloHandler } from '@as-integrations/fastify'
 import cors from '@fastify/cors'
@@ -20,36 +19,7 @@ await app.register(cors, {
 const server = new ApolloServer({
   schema,
   introspection: true,
-  plugins: [
-    fastifyApolloDrainPlugin(app),
-    {
-      requestDidStart(): Promise<GraphQLRequestListener<BaseContext>> {
-        return Promise.resolve({
-          didResolveOperation(requestContext: GraphQLRequestContext<BaseContext>): Promise<void> {
-            logger.info(
-              {
-                query: requestContext.request.query,
-                variables: requestContext.request.variables,
-                operationName: requestContext.request.operationName,
-              },
-              'GraphQL Operation'
-            )
-            return Promise.resolve()
-          },
-          didEncounterErrors(requestContext: GraphQLRequestContext<BaseContext>): Promise<void> {
-            logger.error(
-              {
-                errors: requestContext.errors,
-                query: requestContext.request.query,
-              },
-              'GraphQL Errors'
-            )
-            return Promise.resolve()
-          },
-        })
-      },
-    },
-  ],
+  plugins: [fastifyApolloDrainPlugin(app)],
 })
 
 await server.start()
