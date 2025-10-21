@@ -11,6 +11,9 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./src/__tests__/setup/vitest-setup.ts'],
+    env: {
+      DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/strategiq_test',
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

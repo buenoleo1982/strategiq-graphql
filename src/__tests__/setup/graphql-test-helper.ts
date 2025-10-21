@@ -1,83 +1,78 @@
+import { ApolloServer } from '@apollo/server'
 import type { PrismaClient } from '@prisma/client'
-import { createYoga, type YogaServerInstance } from 'graphql-yoga'
+import type { GraphQLSchema } from 'graphql'
 import type { Context } from '../../context'
 import { schema } from '../../graphql/schema'
 import { createContextLogger } from '../../lib/logger'
 import { generateTraceId } from '../../lib/logger/trace'
 import type { AuthenticatedUser } from '../../types/auth'
 
-// Cache the Yoga instance to avoid recreating it for each test
-let cachedYoga: YogaServerInstance<Record<string, any>, Context> | null = null
-let cachedPrisma: PrismaClient | null = null
-
 export interface CreateTestServerOptions {
   prisma: PrismaClient
   currentUser?: AuthenticatedUser | null
 }
 
-export const createTestServer = (prismaOrOptions: PrismaClient | CreateTestServerOptions) => {
+export const createTestServer = async (
+  prismaOrOptions: PrismaClient | CreateTestServerOptions,
+  optionsOverride?: Partial<CreateTestServerOptions>
+) => {
   // Check if it's options object (has prisma property) or direct PrismaClient
-  const options: CreateTestServerOptions =
+  let options: CreateTestServerOptions =
     'prisma' in prismaOrOptions ? prismaOrOptions : { prisma: prismaOrOptions, currentUser: null }
+
+  // Apply overrides if provided
+  if (optionsOverride) {
+    options = { ...options, ...optionsOverride }
+  }
 
   const { prisma, currentUser = null } = options
 
-  // Reuse cached instance if Prisma client is the same and no auth needed
-  if (cachedYoga && cachedPrisma === prisma && !currentUser) {
-    return cachedYoga
-  }
+  // Create new Apollo Server instance for each test to ensure isolation
+  const server = new ApolloServer<Context>({
+    schema: schema as GraphQLSchema,
+  })
 
-  // Create new instance
-  const yoga = createYoga<Record<string, any>, Context>({
-    schema,
-    context: () => {
+  // Start the server
+  await server.start()
+
+  return {
+    server,
+    executeOperation: async (query: string, variables?: Record<string, any>) => {
       const traceId = generateTraceId()
-      return {
+      const context: Context = {
         prisma,
         logger: createContextLogger({ traceId }),
         traceId,
         currentUser,
-        request: new Request('http://localhost/graphql'),
+        req: {} as any, // Mock FastifyRequest for tests
+        res: {} as any, // Mock FastifyReply for tests
       }
+
+      return server.executeOperation(
+        {
+          query,
+          variables,
+        },
+        {
+          contextValue: context,
+        }
+      )
     },
-    logging: false, // Disable logging in tests
-    maskedErrors: false, // Show real errors in tests (useful for debugging)
-  })
-
-  // Only cache if no authentication
-  if (!currentUser) {
-    cachedYoga = yoga
-    cachedPrisma = prisma
   }
-
-  return yoga
 }
 
-/**
- * Reset the cached Yoga instance (useful for tests that need a fresh instance)
- */
-export const resetTestServer = () => {
-  cachedYoga = null
-  cachedPrisma = null
-}
-
-export const executeGraphQL = async <
-  TServerContext extends Record<string, any> = Record<string, any>,
->(
-  yoga: YogaServerInstance<Record<string, any>, TServerContext>,
+export const executeGraphQL = async (
+  testServer: Awaited<ReturnType<typeof createTestServer>>,
   query: string,
   variables?: Record<string, any>
-) => {
-  const response = await yoga.fetch('http://localhost/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  })
+): Promise<any> => {
+  const result = await testServer.executeOperation(query, variables)
 
-  return response.json()
+  // Apollo Server retorna o resultado no formato { body: { kind: 'single', singleResult: ... } }
+  if (result.body.kind === 'single') {
+    return result.body.singleResult
+  }
+
+  // Para outros tipos de resultado, retorna o resultado completo
+  return result
 }

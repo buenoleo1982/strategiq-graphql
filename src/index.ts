@@ -1,36 +1,83 @@
-import { createYoga } from 'graphql-yoga'
+import type { BaseContext, GraphQLRequestContext, GraphQLRequestListener } from '@apollo/server'
+import { ApolloServer } from '@apollo/server'
+import { fastifyApolloDrainPlugin, fastifyApolloHandler } from '@as-integrations/fastify'
+import cors from '@fastify/cors'
+import fastify, { type FastifyReply, type FastifyRequest } from 'fastify'
 import { createContext } from './context'
 import { schema } from './graphql/schema'
 import { logger } from './lib/logger'
 import { createLoggingFetch } from './lib/logger/middleware'
 import { env } from './support/config'
 
-const yoga = createYoga({
+const app = fastify({ logger: false })
+
+// Registrar CORS
+await app.register(cors, {
+  origin: true,
+  credentials: true,
+})
+
+// Criar instância do Apollo Server
+const server = new ApolloServer({
   schema,
-  context: createContext,
-  graphiql: {
-    title: 'StrategiQ GraphQL API',
-  },
-  logging: {
-    debug: (...args) => logger.debug(args),
-    info: (...args) => logger.info(args),
-    warn: (...args) => logger.warn(args),
-    error: (...args) => logger.error(args),
-  },
+  introspection: true,
+  plugins: [
+    fastifyApolloDrainPlugin(app),
+    {
+      requestDidStart(): Promise<GraphQLRequestListener<BaseContext>> {
+        return Promise.resolve({
+          didResolveOperation(requestContext: GraphQLRequestContext<BaseContext>): Promise<void> {
+            logger.info(
+              {
+                query: requestContext.request.query,
+                variables: requestContext.request.variables,
+                operationName: requestContext.request.operationName,
+              },
+              'GraphQL Operation'
+            )
+            return Promise.resolve()
+          },
+          didEncounterErrors(requestContext: GraphQLRequestContext<BaseContext>): Promise<void> {
+            logger.error(
+              {
+                errors: requestContext.errors,
+                query: requestContext.request.query,
+              },
+              'GraphQL Errors'
+            )
+            return Promise.resolve()
+          },
+        })
+      },
+    },
+  ],
 })
 
-const port = env.PORT
+await server.start()
 
-const _server = Bun.serve({
-  port,
-  fetch: createLoggingFetch(yoga.fetch),
+// Registrar rota GraphQL usando fastifyApolloHandler
+app.route({
+  url: '/graphql',
+  method: ['GET', 'POST', 'OPTIONS'],
+  handler: fastifyApolloHandler(server, {
+    context: async (request: FastifyRequest, reply: FastifyReply) => {
+      return createContext({ req: request, res: reply })
+    },
+  }),
 })
 
-logger.info(
-  {
-    port,
-    endpoint: yoga.graphqlEndpoint, //FIXME: talvez não seja necessário, visto que sempre será a mesma rota
-    env: env.NODE_ENV,
-  },
-  `🚀 Server ready at http://localhost:${port}${yoga.graphqlEndpoint}`
-)
+// Redirecionar rota raiz para GraphQL endpoint
+app.get('/', async (_, reply) => {
+  reply.redirect('/graphql')
+})
+
+const PORT = Number(process.env.PORT) || 4000
+
+// Iniciar servidor
+app.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
+  if (err) {
+    logger.error(err, 'Erro ao iniciar servidor')
+    process.exit(1)
+  }
+  logger.info(`🚀 Servidor GraphQL rodando em ${address}/graphql`)
+})

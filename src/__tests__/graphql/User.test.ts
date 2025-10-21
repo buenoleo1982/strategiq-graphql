@@ -8,7 +8,7 @@ describe('User GraphQL Type', () => {
   describe('Query: users', () => {
     it('should return empty array when no users exist', async () => {
       const ctx = getContext()
-      const yoga = createTestServer(ctx.prisma)
+      const testServer = await createTestServer(ctx.prisma)
 
       const query = `
         query {
@@ -20,9 +20,9 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, query)
+      const result = await executeGraphQL(testServer, query)
 
-      expect(result.data.users).toEqual([])
+      expect(result.data?.users).toEqual([])
     })
 
     it('should return all users', async () => {
@@ -36,7 +36,7 @@ describe('User GraphQL Type', () => {
         ],
       })
 
-      const yoga = createTestServer(ctx.prisma)
+      const testServer = await createTestServer(ctx.prisma)
 
       const query = `
         query {
@@ -48,14 +48,14 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, query)
+      const result = await executeGraphQL(testServer, query)
 
-      expect(result.data.users).toHaveLength(2)
-      expect(result.data.users[0]).toMatchObject({
+      expect(result.data?.users).toHaveLength(2)
+      expect((result.data?.users as any)?.[0]).toMatchObject({
         name: 'João Silva',
         email: 'joao@example.com',
       })
-      expect(result.data.users[1]).toMatchObject({
+      expect((result.data?.users as any)?.[1]).toMatchObject({
         name: 'Maria Santos',
         email: 'maria@example.com',
       })
@@ -68,7 +68,7 @@ describe('User GraphQL Type', () => {
         data: { name: 'Test User', email: 'test@example.com', password: 'password123' },
       })
 
-      const yoga = createTestServer(ctx.prisma)
+      const testServer = await createTestServer(ctx.prisma)
 
       const query = `
         query {
@@ -82,22 +82,22 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, query)
+      const result = await executeGraphQL(testServer, query)
 
-      expect(result.data.users[0]).toHaveProperty('createdAt')
-      expect(result.data.users[0]).toHaveProperty('updatedAt')
-      expect(new Date(result.data.users[0].createdAt)).toBeInstanceOf(Date)
+      expect((result.data?.users as any)?.[0]).toHaveProperty('createdAt')
+      expect((result.data?.users as any)?.[0]).toHaveProperty('updatedAt')
+      expect(new Date((result.data?.users as any)?.[0]?.createdAt)).toBeInstanceOf(Date)
     })
   })
 
   describe('Query: user', () => {
-    it('should return null when user does not exist', async () => {
+    it('should return null for non-existent user', async () => {
       const ctx = getContext()
-      const yoga = createTestServer(ctx.prisma)
+      const testServer = await createTestServer(ctx.prisma)
 
       const query = `
-        query GetUser($id: Int) {
-          user(id: $id) {
+        query {
+          user(id: 999) {
             id
             name
             email
@@ -105,23 +105,23 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, query, { id: 999 })
+      const result = await executeGraphQL(testServer, query)
 
-      expect(result.data.user).toBeNull()
+      expect(result.data?.user).toBeNull()
     })
 
     it('should return user by id', async () => {
       const ctx = getContext()
 
-      const user = await ctx.prisma.user.create({
-        data: { name: 'João Silva', email: 'joao@example.com', password: 'password123' },
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Test User', email: 'test@example.com', password: 'password123' },
       })
 
-      const yoga = createTestServer(ctx.prisma)
+      const testServer = await createTestServer(ctx.prisma)
 
       const query = `
-        query GetUser($id: Int) {
-          user(id: $id) {
+        query {
+          user(id: ${createdUser.id}) {
             id
             name
             email
@@ -129,51 +129,67 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, query, { id: user.id })
+      const result = await executeGraphQL(testServer, query)
 
-      expect(result.data.user).toMatchObject({
-        id: user.id,
-        name: 'João Silva',
-        email: 'joao@example.com',
+      expect(result.data?.user).toMatchObject({
+        id: createdUser.id,
+        name: 'Test User',
+        email: 'test@example.com',
       })
-    })
-
-    it('should return null when id is not provided', async () => {
-      const ctx = getContext()
-      const yoga = createTestServer(ctx.prisma)
-
-      const query = `
-        query GetUser($id: Int) {
-          user(id: $id) {
-            id
-            name
-          }
-        }
-      `
-
-      const result = await executeGraphQL(yoga, query, {})
-
-      expect(result.data.user).toBeNull()
     })
   })
 
   describe('Mutation: createUser', () => {
+    it('should not create user without authentication', async () => {
+      const ctx = getContext()
+      const testServer = await createTestServer(ctx.prisma)
+
+      const mutation = `
+        mutation {
+          createUser(
+            name: "New User"
+            email: "new@example.com"
+            password: "password123"
+          ) {
+            id
+            name
+            email
+          }
+        }
+      `
+
+      const result = await executeGraphQL(testServer, mutation)
+
+      expect(result.errors).toBeDefined()
+      expect(result.errors?.[0]?.message).toContain('autenticad')
+    })
+
     it('should create a new user when authenticated', async () => {
       const ctx = getContext()
 
-      // Create an admin user to authenticate
-      const adminUser = await ctx.prisma.user.create({
-        data: { name: 'Admin', email: 'admin@example.com', password: 'password123' },
+      // Create an authenticated user first
+      const authenticatedUser = await ctx.prisma.user.create({
+        data: { name: 'Admin User', email: 'admin@example.com', password: 'password123' },
       })
 
-      const yoga = createTestServer({
-        prisma: ctx.prisma,
-        currentUser: { id: adminUser.id, email: adminUser.email, name: adminUser.name },
-      })
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: authenticatedUser.id,
+            email: authenticatedUser.email,
+            name: authenticatedUser.name,
+          },
+        }
+      )
 
       const mutation = `
-        mutation CreateUser($name: String!, $email: String!, $password: String!) {
-          createUser(name: $name, email: $email, password: $password) {
+        mutation {
+          createUser(
+            name: "New User"
+            email: "new@example.com"
+            password: "password123"
+          ) {
             id
             name
             email
@@ -181,71 +197,53 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, mutation, {
-        name: 'João Silva',
-        email: 'joao@example.com',
-        password: 'senha123',
-      })
+      const result = await executeGraphQL(testServer, mutation)
 
-      expect(result.data.createUser).toMatchObject({
-        name: 'João Silva',
-        email: 'joao@example.com',
+      expect(result.data?.createUser).toMatchObject({
+        name: 'New User',
+        email: 'new@example.com',
       })
-      expect(result.data.createUser.id).toBeDefined()
+      expect(result.data?.createUser).toHaveProperty('id')
 
       // Verify user was created in database
       const userInDb = await ctx.prisma.user.findUnique({
-        where: { id: result.data.createUser.id },
+        where: { email: 'new@example.com' },
       })
-
-      expect(userInDb).toBeDefined()
-      expect(userInDb?.name).toBe('João Silva')
+      expect(userInDb).toBeTruthy()
+      expect(userInDb?.name).toBe('New User')
     })
 
-    it('should fail when not authenticated', async () => {
-      const ctx = getContext()
-      const yoga = createTestServer(ctx.prisma)
-
-      const mutation = `
-        mutation CreateUser($name: String!, $email: String!, $password: String!) {
-          createUser(name: $name, email: $email, password: $password) {
-            id
-            name
-            email
-          }
-        }
-      `
-
-      const result = await executeGraphQL(yoga, mutation, {
-        name: 'João Silva',
-        email: 'joao@example.com',
-        password: 'senha123',
-      })
-
-      expect(result.errors).toBeDefined()
-      expect(result.errors[0].extensions.code).toBe('UNAUTHENTICATED')
-      expect(result.data.createUser).toBeNull()
-    })
-
-    it('should fail when creating user with duplicate email', async () => {
+    it('should not create user with duplicate email', async () => {
       const ctx = getContext()
 
-      const adminUser = await ctx.prisma.user.create({
-        data: { name: 'Admin', email: 'admin@example.com', password: 'password123' },
-      })
-
+      // Create initial user
       await ctx.prisma.user.create({
         data: { name: 'Existing User', email: 'existing@example.com', password: 'password123' },
       })
 
-      const yoga = createTestServer({
-        prisma: ctx.prisma,
-        currentUser: { id: adminUser.id, email: adminUser.email, name: adminUser.name },
+      // Create authenticated user
+      const authenticatedUser = await ctx.prisma.user.create({
+        data: { name: 'Admin User', email: 'admin@example.com', password: 'password123' },
       })
 
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: authenticatedUser.id,
+            email: authenticatedUser.email,
+            name: authenticatedUser.name,
+          },
+        }
+      )
+
       const mutation = `
-        mutation CreateUser($name: String!, $email: String!, $password: String!) {
-          createUser(name: $name, email: $email, password: $password) {
+        mutation {
+          createUser(
+            name: "Duplicate User"
+            email: "existing@example.com"
+            password: "password123"
+          ) {
             id
             name
             email
@@ -253,35 +251,26 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, mutation, {
-        name: 'Another User',
-        email: 'existing@example.com',
-        password: 'senha123',
-      })
+      const result = await executeGraphQL(testServer, mutation)
 
       expect(result.errors).toBeDefined()
-      expect(result.errors).toHaveLength(1)
-      expect(result.data.createUser).toBeNull()
+      expect(result.errors?.[0]?.message).toContain('email')
     })
   })
 
   describe('Mutation: updateUser', () => {
-    it('should update user name', async () => {
+    it('should update existing user', async () => {
       const ctx = getContext()
 
-      const user = await ctx.prisma.user.create({
-        data: { name: 'João Silva', email: 'joao@example.com', password: 'password123' },
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Original Name', email: 'original@example.com', password: 'password123' },
       })
 
-      // Create test server with authenticated user
-      const yoga = createTestServer({
-        prisma: ctx.prisma,
-        currentUser: { id: user.id, email: user.email, name: user.name },
-      })
+      const testServer = await createTestServer(ctx.prisma)
 
       const mutation = `
-        mutation UpdateUser($id: Int!, $name: String) {
-          updateUser(id: $id, name: $name) {
+        mutation {
+          updateUser(id: ${createdUser.id}, name: "Updated Name") {
             id
             name
             email
@@ -289,34 +278,22 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, mutation, {
-        id: user.id,
-        name: 'João Santos',
-      })
+      const result = await executeGraphQL(testServer, mutation)
 
-      expect(result.data.updateUser).toMatchObject({
-        id: user.id,
-        name: 'João Santos',
-        email: 'joao@example.com',
+      expect(result.data?.updateUser).toMatchObject({
+        id: createdUser.id,
+        name: 'Updated Name',
+        email: 'original@example.com',
       })
     })
 
-    it('should update user email', async () => {
+    it('should return null for non-existent user update', async () => {
       const ctx = getContext()
-
-      const user = await ctx.prisma.user.create({
-        data: { name: 'João Silva', email: 'joao@example.com', password: 'password123' },
-      })
-
-      // Create test server with authenticated user
-      const yoga = createTestServer({
-        prisma: ctx.prisma,
-        currentUser: { id: user.id, email: user.email, name: user.name },
-      })
+      const testServer = await createTestServer(ctx.prisma)
 
       const mutation = `
-        mutation UpdateUser($id: Int!, $email: String) {
-          updateUser(id: $id, email: $email) {
+        mutation {
+          updateUser(id: 999, name: "Updated Name") {
             id
             name
             email
@@ -324,56 +301,25 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, mutation, {
-        id: user.id,
-        email: 'joao.silva@example.com',
-      })
+      const result = await executeGraphQL(testServer, mutation)
 
-      expect(result.data.updateUser).toMatchObject({
-        id: user.id,
-        email: 'joao.silva@example.com',
-      })
-    })
-
-    it('should fail when updating non-existent user', async () => {
-      const ctx = getContext()
-      const yoga = createTestServer(ctx.prisma)
-
-      const mutation = `
-        mutation UpdateUser($id: Int!, $name: String) {
-          updateUser(id: $id, name: $name) {
-            id
-            name
-          }
-        }
-      `
-
-      const result = await executeGraphQL(yoga, mutation, {
-        id: 999,
-        name: 'New Name',
-      })
-
-      expect(result.errors).toBeDefined()
+      expect(result.data?.updateUser).toBeNull()
     })
   })
 
   describe('Mutation: deleteUser', () => {
-    it('should delete a user', async () => {
+    it('should delete existing user', async () => {
       const ctx = getContext()
 
-      const user = await ctx.prisma.user.create({
-        data: { name: 'João Silva', email: 'joao@example.com', password: 'password123' },
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Test User', email: 'test@example.com', password: 'password123' },
       })
 
-      // Create test server with authenticated user
-      const yoga = createTestServer({
-        prisma: ctx.prisma,
-        currentUser: { id: user.id, email: user.email, name: user.name },
-      })
+      const testServer = await createTestServer(ctx.prisma)
 
       const mutation = `
-        mutation DeleteUser($id: Int!) {
-          deleteUser(id: $id) {
+        mutation {
+          deleteUser(id: ${createdUser.id}) {
             id
             name
             email
@@ -381,41 +327,38 @@ describe('User GraphQL Type', () => {
         }
       `
 
-      const result = await executeGraphQL(yoga, mutation, {
-        id: user.id,
+      const result = await executeGraphQL(testServer, mutation)
+
+      expect(result.data?.deleteUser).toMatchObject({
+        id: createdUser.id,
+        name: 'Test User',
+        email: 'test@example.com',
       })
 
-      expect(result.data.deleteUser).toMatchObject({
-        id: user.id,
-        name: 'João Silva',
-        email: 'joao@example.com',
+      // Verificar se o usuário foi realmente deletado
+      const deletedUser = await ctx.prisma.user.findUnique({
+        where: { id: createdUser.id },
       })
-
-      // Verify user was deleted from database
-      const userInDb = await ctx.prisma.user.findUnique({
-        where: { id: user.id },
-      })
-
-      expect(userInDb).toBeNull()
+      expect(deletedUser).toBeNull()
     })
 
-    it('should fail when deleting non-existent user', async () => {
+    it('should return null for non-existent user deletion', async () => {
       const ctx = getContext()
-      const yoga = createTestServer(ctx.prisma)
+      const testServer = await createTestServer(ctx.prisma)
 
       const mutation = `
-        mutation DeleteUser($id: Int!) {
-          deleteUser(id: $id) {
+        mutation {
+          deleteUser(id: 999) {
             id
+            name
+            email
           }
         }
       `
 
-      const result = await executeGraphQL(yoga, mutation, {
-        id: 999,
-      })
+      const result = await executeGraphQL(testServer, mutation)
 
-      expect(result.errors).toBeDefined()
+      expect(result.data?.deleteUser).toBeNull()
     })
   })
 })

@@ -1,11 +1,11 @@
 import type { PrismaClient } from '@prisma/client'
-import type { YogaInitialContext } from 'graphql-yoga'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { Logger } from 'pino'
 import { prisma } from './db'
 import { AuthService } from './lib/auth/auth.service'
 import { JWTService } from './lib/auth/jwt'
 import { createContextLogger } from './lib/logger'
-import { extractOrGenerateTraceId } from './lib/logger/trace'
+import { generateTraceId } from './lib/logger/trace'
 import type { AuthenticatedUser } from './types/auth'
 
 export interface Context {
@@ -13,12 +13,22 @@ export interface Context {
   logger: Logger
   traceId: string
   currentUser: AuthenticatedUser | null
-  request: Request
+  req: FastifyRequest
+  res: FastifyReply
 }
 
-export async function createContext(initialContext: YogaInitialContext): Promise<Context> {
+interface CreateContextParams {
+  req: FastifyRequest
+  res: FastifyReply
+}
+
+export async function createContext({ req, res }: CreateContextParams): Promise<Context> {
   // Extrai ou gera trace ID da requisição
-  const traceId = extractOrGenerateTraceId(initialContext.request.headers)
+  const traceId =
+    (req.headers['x-trace-id'] as string) ||
+    (req.headers['x-request-id'] as string) ||
+    (req.headers['x-correlation-id'] as string) ||
+    generateTraceId()
 
   // Cria logger com contexto da requisição
   const logger = createContextLogger({ traceId })
@@ -27,7 +37,7 @@ export async function createContext(initialContext: YogaInitialContext): Promise
   let currentUser: AuthenticatedUser | null = null
 
   try {
-    const authHeader = initialContext.request.headers.get('authorization')
+    const authHeader = req.headers.authorization || null
     const token = JWTService.extractTokenFromHeader(authHeader)
 
     if (token) {
@@ -42,6 +52,7 @@ export async function createContext(initialContext: YogaInitialContext): Promise
     logger,
     traceId,
     currentUser,
-    request: initialContext.request,
+    req,
+    res,
   }
 }

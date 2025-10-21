@@ -10,7 +10,7 @@ export const logout: FieldResolver<'Mutation', 'logout'> = async (_, _args, ctx)
     })
   }
 
-  const authHeader = ctx.request.headers.get('authorization')
+  const authHeader = ctx.req.headers.authorization || null
   const token = JWTService.extractTokenFromHeader(authHeader)
 
   if (!token) {
