@@ -6,7 +6,6 @@ import fastify, { type FastifyReply, type FastifyRequest } from 'fastify'
 import { createContext } from './context'
 import { schema } from './graphql/schema'
 import { logger } from './lib/logger'
-import { createLoggingFetch } from './lib/logger/middleware'
 import { env } from './support/config'
 
 const app = fastify({ logger: false })
@@ -71,7 +70,7 @@ app.get('/', async (_, reply) => {
   reply.redirect('/graphql')
 })
 
-const PORT = Number(process.env.PORT) || 4000
+const PORT = env.PORT
 
 // Iniciar servidor
 app.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
