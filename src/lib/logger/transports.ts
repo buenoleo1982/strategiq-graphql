@@ -1,3 +1,5 @@
+import { isDev } from '@/support'
+import { env } from '@/support/config'
 import path from 'node:path'
 import pino from 'pino'
 import { build } from 'pino-roll'
@@ -18,12 +20,12 @@ interface LogRotationConfig {
  * Configuração padrão de rotação
  */
 const defaultRotationConfig: LogRotationConfig = {
-  enabled: process.env.LOG_ROTATION_ENABLED === 'true',
-  directory: process.env.LOG_DIR || './logs',
-  filename: process.env.LOG_FILENAME || 'app.log',
-  frequency: (process.env.LOG_FREQUENCY as 'daily' | 'hourly') || 'daily',
-  maxFiles: process.env.LOG_MAX_FILES ? Number(process.env.LOG_MAX_FILES) : 7,
-  maxSize: process.env.LOG_MAX_SIZE || '10M',
+  enabled: env.LOG_ROTATION_ENABLED,
+  directory: env.LOG_DIR,
+  filename: env.LOG_FILENAME,
+  frequency: env.LOG_FREQUENCY,
+  maxFiles: env.LOG_MAX_FILES,
+  maxSize: env.LOG_MAX_SIZE,
 }
 
 /**
@@ -61,9 +63,8 @@ export function createMultiTransport(options: {
 
   // Transport para console (com pretty print em dev)
   if (options.console !== false) {
-    const isDevelopment = process.env.NODE_ENV !== 'production'
 
-    if (isDevelopment) {
+    if (isDev) {
       targets.push({
         target: 'pino-pretty',
         level: 'debug',

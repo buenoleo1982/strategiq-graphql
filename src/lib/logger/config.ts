@@ -1,3 +1,5 @@
+import { isDev, isTesting } from '@/support'
+import { env } from '@/support/config'
 import type { LoggerOptions } from 'pino'
 import pino from 'pino'
 import type pinoPretty from 'pino-pretty'
@@ -19,17 +21,15 @@ export type LogLevel = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS]
 /**
  * Configuração do ambiente
  */
-const isDevelopment = process.env.NODE_ENV !== 'production'
-const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true'
 const logLevel = (process.env.LOG_LEVEL ||
-  (isTest ? 'silent' : isDevelopment ? 'debug' : 'info')) as LogLevel
+  (isTesting ? 'silent' : isDev ? 'debug' : 'info')) as LogLevel
 
 /**
  * Configuração base do Pino para produção
  * Logs em JSON estruturado para fácil parsing
  */
 const productionConfig: LoggerOptions = {
-  level: isTest ? 'silent' : logLevel,
+  level: isTesting ? 'silent' : logLevel,
   formatters: {
     level: label => ({ level: label }),
     bindings: bindings => ({
@@ -61,7 +61,7 @@ const productionConfig: LoggerOptions = {
   },
   // Base para contexto global
   base: {
-    env: process.env.NODE_ENV || 'development',
+    env: env.NODE_ENV,
     service: 'strategiq-api',
   },
 }
@@ -72,7 +72,7 @@ const productionConfig: LoggerOptions = {
  */
 const developmentConfig: LoggerOptions = {
   ...productionConfig,
-  transport: isTest
+  transport: isTesting
     ? undefined
     : {
         target: 'pino-pretty',
@@ -99,9 +99,9 @@ const testConfig: LoggerOptions = {
 /**
  * Exporta a configuração baseada no ambiente
  */
-export const loggerConfig = isTest
+export const loggerConfig = isTesting
   ? testConfig
-  : isDevelopment
+  : isDev
     ? developmentConfig
     : productionConfig
 

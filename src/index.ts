@@ -3,6 +3,7 @@ import { createContext } from './context'
 import { schema } from './graphql/schema'
 import { logger } from './lib/logger'
 import { createLoggingFetch } from './lib/logger/middleware'
+import { env } from './support/config'
 
 const yoga = createYoga({
   schema,
@@ -18,7 +19,7 @@ const yoga = createYoga({
   },
 })
 
-const port = process.env.PORT || 4000
+const port = env.PORT
 
 const _server = Bun.serve({
   port,
@@ -28,8 +29,8 @@ const _server = Bun.serve({
 logger.info(
   {
     port,
-    endpoint: yoga.graphqlEndpoint,
-    env: process.env.NODE_ENV || 'development',
+    endpoint: yoga.graphqlEndpoint, //FIXME: talvez não seja necessário, visto que sempre será a mesma rota
+    env: env.NODE_ENV,
   },
   `🚀 Server ready at http://localhost:${port}${yoga.graphqlEndpoint}`
 )
