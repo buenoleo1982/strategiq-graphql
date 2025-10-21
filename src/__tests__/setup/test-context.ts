@@ -12,16 +12,22 @@ export type TestContext = {
 }
 
 let testContext: TestContext
+let basePrisma: PrismaClient
 
+/**
+ * Limpeza otimizada usando TRUNCATE ou DELETE direto
+ * Muito mais rápido que query dinâmica
+ */
 const cleanupDatabase = async (prisma: PrismaClient) => {
-  // Delete all records from all tables (in correct order due to foreign keys)
-  const tables = await prisma.$queryRaw<Array<{ name: string }>>`
-    SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_prisma%'
-  `
+  // Disable foreign keys temporarily for faster cleanup
+  await prisma.$executeRawUnsafe('PRAGMA foreign_keys = OFF')
 
-  for (const { name } of tables) {
-    await prisma.$executeRawUnsafe(`DELETE FROM "${name}"`)
-  }
+  // Delete in specific order (faster than querying tables)
+  // Add your tables here in the correct order
+  await prisma.user.deleteMany()
+
+  // Re-enable foreign keys
+  await prisma.$executeRawUnsafe('PRAGMA foreign_keys = ON')
 }
 
 export const setupTestDatabase = () => {
@@ -29,37 +35,46 @@ export const setupTestDatabase = () => {
     // Set test database URL
     process.env.DATABASE_URL = TEST_DATABASE_URL
 
-    // Create Prisma Client
-    testContext = {
-      prisma: new PrismaClient({
-        datasources: {
-          db: {
-            url: TEST_DATABASE_URL,
-          },
+    // Create Prisma Client (only once)
+    basePrisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: TEST_DATABASE_URL,
         },
-        log: [], // Disable Prisma logs in tests
-      }),
+      },
+      log: [], // Disable Prisma logs in tests
+    })
+
+    // Push schema to test database once (only if DB doesn't exist)
+    if (!existsSync(TEST_DB_PATH)) {
+      execSync('bunx prisma db push --skip-generate --force-reset', {
+        env: {
+          ...process.env,
+          DATABASE_URL: TEST_DATABASE_URL,
+        },
+        stdio: 'ignore',
+      })
     }
 
-    // Push schema to test database once
-    execSync('bunx prisma db push --skip-generate --force-reset', {
-      env: {
-        ...process.env,
-        DATABASE_URL: TEST_DATABASE_URL,
-      },
-      stdio: 'ignore',
-    })
+    // Connect once
+    await basePrisma.$connect()
+
+    // Initial context (will be reset per test)
+    testContext = {
+      prisma: basePrisma,
+    }
   })
 
   beforeEach(async () => {
-    // Clean all data between tests
-    await cleanupDatabase(testContext.prisma)
+    // Fast cleanup between tests (only delete data, keep schema)
+    await cleanupDatabase(basePrisma)
   })
 
   afterAll(async () => {
-    // Disconnect and cleanup
-    await testContext.prisma.$disconnect()
+    // Disconnect once
+    await basePrisma.$disconnect()
 
+    // Cleanup database files after all tests
     const cleanupFiles = [TEST_DB_PATH, `${TEST_DB_PATH}-shm`, `${TEST_DB_PATH}-wal`]
 
     cleanupFiles.forEach(file => {
