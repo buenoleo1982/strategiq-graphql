@@ -44,6 +44,14 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  AuthResponse: { // root type
+    tokens: NexusGenRootTypes['AuthTokens']; // AuthTokens!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  AuthTokens: { // root type
+    accessToken: string; // String!
+    refreshToken: string; // String!
+  }
   Mutation: {};
   Query: {};
   User: { // root type
@@ -66,12 +74,25 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  AuthResponse: { // field return type
+    tokens: NexusGenRootTypes['AuthTokens']; // AuthTokens!
+    user: NexusGenRootTypes['User']; // User!
+  }
+  AuthTokens: { // field return type
+    accessToken: string; // String!
+    refreshToken: string; // String!
+  }
   Mutation: { // field return type
     createUser: NexusGenRootTypes['User'] | null; // User
     deleteUser: NexusGenRootTypes['User'] | null; // User
+    login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    logout: boolean; // Boolean!
+    refreshToken: NexusGenRootTypes['AuthTokens']; // AuthTokens!
+    register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
+    me: NexusGenRootTypes['User'] | null; // User
     user: NexusGenRootTypes['User'] | null; // User
     users: Array<NexusGenRootTypes['User'] | null> | null; // [User]
   }
@@ -85,12 +106,25 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  AuthResponse: { // field return type name
+    tokens: 'AuthTokens'
+    user: 'User'
+  }
+  AuthTokens: { // field return type name
+    accessToken: 'String'
+    refreshToken: 'String'
+  }
   Mutation: { // field return type name
     createUser: 'User'
     deleteUser: 'User'
+    login: 'AuthResponse'
+    logout: 'Boolean'
+    refreshToken: 'AuthTokens'
+    register: 'AuthResponse'
     updateUser: 'User'
   }
   Query: { // field return type name
+    me: 'User'
     user: 'User'
     users: 'User'
   }
@@ -108,9 +142,22 @@ export interface NexusGenArgTypes {
     createUser: { // args
       email: string; // String!
       name: string; // String!
+      password: string; // String!
     }
     deleteUser: { // args
       id: number; // Int!
+    }
+    login: { // args
+      email: string; // String!
+      password: string; // String!
+    }
+    refreshToken: { // args
+      refreshToken: string; // String!
+    }
+    register: { // args
+      email: string; // String!
+      name: string; // String!
+      password: string; // String!
     }
     updateUser: { // args
       email?: string | null; // String

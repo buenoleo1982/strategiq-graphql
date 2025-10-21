@@ -12,6 +12,7 @@
       "!node_modules",
       "!.idea",
       "!.DS_Store",
+      "!.cursor",
       "!**/*.generated.ts",
       "!**/*.generated.tsx",
       "!src/generated",

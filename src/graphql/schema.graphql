@@ -2,16 +2,31 @@
 ### Do not make changes to this file directly
 
 
+type AuthResponse {
+  tokens: AuthTokens!
+  user: User!
+}
+
+type AuthTokens {
+  accessToken: String!
+  refreshToken: String!
+}
+
 """Date custom scalar type"""
 scalar DateTime
 
 type Mutation {
-  createUser(email: String!, name: String!): User
+  createUser(email: String!, name: String!, password: String!): User
   deleteUser(id: Int!): User
+  login(email: String!, password: String!): AuthResponse!
+  logout: Boolean!
+  refreshToken(refreshToken: String!): AuthTokens!
+  register(email: String!, name: String!, password: String!): AuthResponse!
   updateUser(email: String, id: Int!, name: String): User
 }
 
 type Query {
+  me: User
   user(id: Int): User
   users: [User]
 }

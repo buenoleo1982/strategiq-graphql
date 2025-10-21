@@ -1,4 +1,5 @@
 import { extendType, nonNull, stringArg } from 'nexus'
+import { UserMutationResolvers } from '@/graphql/resolvers'
 
 export const UserMutation = extendType({
   type: 'Mutation',
@@ -8,15 +9,9 @@ export const UserMutation = extendType({
       args: {
         name: nonNull(stringArg()),
         email: nonNull(stringArg()),
+        password: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, ctx) => {
-        return ctx.prisma.user.create({
-          data: {
-            name: args.name,
-            email: args.email,
-          },
-        })
-      },
+      resolve: UserMutationResolvers.createUser,
     })
 
     t.field('updateUser', {
@@ -26,15 +21,7 @@ export const UserMutation = extendType({
         name: stringArg(),
         email: stringArg(),
       },
-      resolve: async (_parent, args, ctx) => {
-        return ctx.prisma.user.update({
-          where: { id: args.id },
-          data: {
-            ...(args.name && { name: args.name }),
-            ...(args.email && { email: args.email }),
-          },
-        })
-      },
+      resolve: UserMutationResolvers.updateUser,
     })
 
     t.field('deleteUser', {
@@ -42,11 +29,7 @@ export const UserMutation = extendType({
       args: {
         id: nonNull('Int'),
       },
-      resolve: async (_parent, args, ctx) => {
-        return ctx.prisma.user.delete({
-          where: { id: args.id },
-        })
-      },
+      resolve: UserMutationResolvers.deleteUser,
     })
   },
 })

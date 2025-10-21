@@ -1,13 +1,12 @@
 import { extendType } from 'nexus'
+import { UserQueryResolvers } from '@/graphql/resolvers'
 
 export const UserQuery = extendType({
   type: 'Query',
   definition(t) {
     t.list.field('users', {
       type: 'User',
-      resolve: async (_parent, _args, ctx) => {
-        return ctx.prisma.user.findMany()
-      },
+      resolve: UserQueryResolvers.users,
     })
 
     t.field('user', {
@@ -15,12 +14,7 @@ export const UserQuery = extendType({
       args: {
         id: 'Int',
       },
-      resolve: async (_parent, args, ctx) => {
-        if (!args.id) return null
-        return ctx.prisma.user.findUnique({
-          where: { id: args.id },
-        })
-      },
+      resolve: UserQueryResolvers.user,
     })
   },
 })

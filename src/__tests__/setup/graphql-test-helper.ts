@@ -4,31 +4,53 @@ import type { Context } from '../../context'
 import { schema } from '../../graphql/schema'
 import { createContextLogger } from '../../lib/logger'
 import { generateTraceId } from '../../lib/logger/trace'
+import type { AuthenticatedUser } from '../../types/auth'
 
 // Cache the Yoga instance to avoid recreating it for each test
 let cachedYoga: YogaServerInstance<Record<string, any>, Context> | null = null
 let cachedPrisma: PrismaClient | null = null
 
-export const createTestServer = (prisma: PrismaClient) => {
-  // Reuse cached instance if Prisma client is the same
-  if (cachedYoga && cachedPrisma === prisma) {
+export interface CreateTestServerOptions {
+  prisma: PrismaClient
+  currentUser?: AuthenticatedUser | null
+}
+
+export const createTestServer = (prismaOrOptions: PrismaClient | CreateTestServerOptions) => {
+  // Check if it's options object (has prisma property) or direct PrismaClient
+  const options: CreateTestServerOptions =
+    'prisma' in prismaOrOptions ? prismaOrOptions : { prisma: prismaOrOptions, currentUser: null }
+
+  const { prisma, currentUser = null } = options
+
+  // Reuse cached instance if Prisma client is the same and no auth needed
+  if (cachedYoga && cachedPrisma === prisma && !currentUser) {
     return cachedYoga
   }
 
   // Create new instance
-  cachedYoga = createYoga<Record<string, any>, Context>({
+  const yoga = createYoga<Record<string, any>, Context>({
     schema,
-    context: () => ({
-      prisma,
-      logger: createContextLogger({ traceId: generateTraceId() }),
-      traceId: generateTraceId(),
-    }),
+    context: () => {
+      const traceId = generateTraceId()
+      return {
+        prisma,
+        logger: createContextLogger({ traceId }),
+        traceId,
+        currentUser,
+        request: new Request('http://localhost/graphql'),
+      }
+    },
     logging: false, // Disable logging in tests
     maskedErrors: false, // Show real errors in tests (useful for debugging)
   })
 
-  cachedPrisma = prisma
-  return cachedYoga
+  // Only cache if no authentication
+  if (!currentUser) {
+    cachedYoga = yoga
+    cachedPrisma = prisma
+  }
+
+  return yoga
 }
 
 /**
