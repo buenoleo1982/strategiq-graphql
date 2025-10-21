@@ -1,6 +1,7 @@
-import { queryType } from 'nexus'
+import { extendType } from 'nexus'
 
-export const Query = queryType({
+export const UserQuery = extendType({
+  type: 'Query',
   definition(t) {
     t.list.field('users', {
       type: 'User',

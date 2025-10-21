@@ -1,6 +1,7 @@
-import { mutationType, nonNull, stringArg } from 'nexus'
+import { extendType, nonNull, stringArg } from 'nexus'
 
-export const Mutation = mutationType({
+export const UserMutation = extendType({
+  type: 'Mutation',
   definition(t) {
     t.field('createUser', {
       type: 'User',
