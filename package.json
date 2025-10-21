@@ -15,10 +15,11 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "schema:generate": "NEXUS_SHOULD_GENERATE_ARTIFACTS=true NODE_ENV=development bun src/graphql/schema.ts",
     "lint": "biome check --write .",
     "lint:unsafe": "biome check --write --unsafe .",
     "format": "biome format --write .",
-    "check": "biome check --write . && tsc --noEmit && biome format --write . && bun run test:run",
+    "check": "biome check --write . && tsc --noEmit && bun run schema:generate && biome format --write . && bun run test:run",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },
