@@ -24,9 +24,6 @@
     "noPropertyAccessFromIndexSignature": false,
     // Additional paths
     "types": ["bun-types"],
-    "paths": {
-      "@/*": ["./src/*"],
-    },
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "baseUrl": ".",

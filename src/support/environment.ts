@@ -1,4 +1,4 @@
-import { env } from "@/support/config";
+import { env } from '@/support/config'
 
 export const isProduction = env.NODE_ENV === 'production'
 export const isTesting = env.NODE_ENV === 'test'

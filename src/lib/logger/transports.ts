@@ -1,8 +1,8 @@
-import { isDev } from '@/support'
-import { env } from '@/support/config'
 import path from 'node:path'
 import pino from 'pino'
 import { build } from 'pino-roll'
+import { isDev } from '@/support'
+import { env } from '@/support/config'
 
 /**
  * Configuração de rotação de logs
@@ -63,7 +63,6 @@ export function createMultiTransport(options: {
 
   // Transport para console (com pretty print em dev)
   if (options.console !== false) {
-
     if (isDev) {
       targets.push({
         target: 'pino-pretty',

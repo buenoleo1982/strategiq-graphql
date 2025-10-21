@@ -1,8 +1,8 @@
-import { isDev, isTesting } from '@/support'
-import { env } from '@/support/config'
 import type { LoggerOptions } from 'pino'
 import pino from 'pino'
 import type pinoPretty from 'pino-pretty'
+import { isDev, isTesting } from '@/support'
+import { env } from '@/support/config'
 
 /**
  * Níveis de log disponíveis
@@ -99,11 +99,7 @@ const testConfig: LoggerOptions = {
 /**
  * Exporta a configuração baseada no ambiente
  */
-export const loggerConfig = isTesting
-  ? testConfig
-  : isDev
-    ? developmentConfig
-    : productionConfig
+export const loggerConfig = isTesting ? testConfig : isDev ? developmentConfig : productionConfig
 
 /**
  * Tipo para contexto de logging
