@@ -1,32 +1,32 @@
-import { beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll } from 'vitest'
 
 // Store original console methods
-const originalConsoleError = console.error;
-const originalConsoleWarn = console.warn;
+const originalConsoleError = console.error
+const originalConsoleWarn = console.warn
 
 // Suppress console errors and warnings during tests
 beforeAll(() => {
   console.error = (...args: any[]) => {
     // Only suppress GraphQL and Prisma error logs
-    const message = args[0]?.toString() || '';
+    const message = args[0]?.toString() || ''
     if (
       message.includes('GraphQLError') ||
       message.includes('PrismaClientKnownRequestError') ||
       message.includes('Invalid `prisma.')
     ) {
-      return;
+      return
     }
-    originalConsoleError(...args);
-  };
+    originalConsoleError(...args)
+  }
 
-  console.warn = (...args: any[]) => {
+  console.warn = (..._args: any[]) => {
     // Suppress warnings during tests
-    return;
-  };
-});
+    return
+  }
+})
 
 // Restore console methods after tests
 afterAll(() => {
-  console.error = originalConsoleError;
-  console.warn = originalConsoleWarn;
-});
+  console.error = originalConsoleError
+  console.warn = originalConsoleWarn
+})

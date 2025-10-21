@@ -1,6 +1,6 @@
-import { makeSchema } from 'nexus';
-import { join } from 'path';
-import * as types from './types';
+import { join } from 'node:path'
+import { makeSchema } from 'nexus'
+import * as types from './types'
 
 export const schema = makeSchema({
   types,
@@ -20,4 +20,4 @@ export const schema = makeSchema({
       },
     ],
   },
-});
+})

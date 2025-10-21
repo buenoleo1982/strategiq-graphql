@@ -1,12 +1,12 @@
-import { prisma } from './db';
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '@prisma/client'
+import { prisma } from './db'
 
 export interface Context {
-  prisma: PrismaClient;
+  prisma: PrismaClient
 }
 
 export function createContext(): Context {
   return {
     prisma,
-  };
+  }
 }

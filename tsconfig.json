@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     // Environment setup & latest features
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
@@ -25,9 +23,7 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
     // Additional paths
-    "types": [
-      "bun-types"
-    ],
+    "types": ["bun-types"],
     "esModuleInterop": true,
     "resolveJsonModule": true
   }

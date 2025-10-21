@@ -1,0 +1,54 @@
+{
+  "formatter": "language_server",
+  "format_on_save": "on",
+  "code_actions_on_format": {
+    "source.organizeImports.biome": true,
+    "source.fixAll.biome": true
+  },
+  "lsp": {
+    "biome": {
+      "binary": {
+        "path": "./node_modules/@biomejs/biome/bin/biome",
+        "arguments": ["lsp-proxy"]
+      }
+    }
+  },
+  "languages": {
+    "TypeScript": {
+      "formatter": "language_server",
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports.biome": true,
+        "source.fixAll.biome": true
+      }
+    },
+    "JavaScript": {
+      "formatter": "language_server",
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports.biome": true,
+        "source.fixAll.biome": true
+      }
+    },
+    "TSX": {
+      "formatter": "language_server",
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports.biome": true,
+        "source.fixAll.biome": true
+      }
+    },
+    "JSX": {
+      "formatter": "language_server",
+      "format_on_save": "on",
+      "code_actions_on_format": {
+        "source.organizeImports.biome": true,
+        "source.fixAll.biome": true
+      }
+    },
+    "JSON": {
+      "formatter": "language_server",
+      "format_on_save": "on"
+    }
+  }
+}

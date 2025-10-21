@@ -1,6 +1,6 @@
-import { createYoga } from 'graphql-yoga';
-import { schema } from './src/graphql/schema';
-import { createContext } from './src/context';
+import { createYoga } from 'graphql-yoga'
+import { createContext } from './src/context'
+import { schema } from './src/graphql/schema'
 
 const yoga = createYoga({
   schema,
@@ -8,13 +8,13 @@ const yoga = createYoga({
   graphiql: {
     title: 'StrategiQ GraphQL API',
   },
-});
+})
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4000
 
-const server = Bun.serve({
+const _server = Bun.serve({
   port,
   fetch: yoga.fetch,
-});
+})
 
-console.log(`🚀 Server ready at http://localhost:${port}${yoga.graphqlEndpoint}`);
+console.log(`🚀 Server ready at http://localhost:${port}${yoga.graphqlEndpoint}`)

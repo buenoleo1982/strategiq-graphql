@@ -1,4 +1,4 @@
-import { mutationType, nonNull, stringArg } from 'nexus';
+import { mutationType, nonNull, stringArg } from 'nexus'
 
 export const Mutation = mutationType({
   definition(t) {
@@ -14,9 +14,9 @@ export const Mutation = mutationType({
             name: args.name,
             email: args.email,
           },
-        });
+        })
       },
-    });
+    })
 
     t.field('updateUser', {
       type: 'User',
@@ -32,9 +32,9 @@ export const Mutation = mutationType({
             ...(args.name && { name: args.name }),
             ...(args.email && { email: args.email }),
           },
-        });
+        })
       },
-    });
+    })
 
     t.field('deleteUser', {
       type: 'User',
@@ -44,8 +44,8 @@ export const Mutation = mutationType({
       resolve: async (_parent, args, ctx) => {
         return ctx.prisma.user.delete({
           where: { id: args.id },
-        });
+        })
       },
-    });
+    })
   },
-});
+})
