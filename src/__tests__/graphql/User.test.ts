@@ -12,17 +12,31 @@ describe('User GraphQL Type', () => {
 
       const query = `
         query {
-          users {
-            id
-            name
-            email
+          userLoad {
+            nodes {
+              id
+              name
+              email
+            }
+            pagination {
+              totalCount
+              page
+              pageSize
+              hasMore
+            }
           }
         }
       `
 
       const result = await executeGraphQL(testServer, query)
 
-      expect(result.data?.users).toEqual([])
+      expect(result.data?.userLoad.nodes).toEqual([])
+      expect(result.data?.userLoad.pagination).toMatchObject({
+        totalCount: 0,
+        pageSize: 10,
+        hasMore: false,
+        page: 1
+      })
     })
 
     it('should return all users', async () => {
@@ -40,24 +54,38 @@ describe('User GraphQL Type', () => {
 
       const query = `
         query {
-          users {
-            id
-            name
-            email
+          userLoad {
+            nodes {
+              id
+              name
+              email
+            }
+            pagination {
+              totalCount
+              page
+              pageSize
+              hasMore
+            }
           }
         }
       `
 
       const result = await executeGraphQL(testServer, query)
 
-      expect(result.data?.users).toHaveLength(2)
-      expect((result.data?.users as any)?.[0]).toMatchObject({
+      expect(result.data?.userLoad.nodes).toHaveLength(2)
+      expect(result.data?.userLoad.nodes[0]).toMatchObject({
         name: 'João Silva',
         email: 'joao@example.com',
       })
-      expect((result.data?.users as any)?.[1]).toMatchObject({
+      expect(result.data?.userLoad.nodes[1]).toMatchObject({
         name: 'Maria Santos',
         email: 'maria@example.com',
+      })
+      expect(result.data?.userLoad.pagination).toMatchObject({
+        totalCount: 2,
+        pageSize: 10,
+        hasMore: false,
+        page: 1
       })
     })
 
@@ -72,21 +100,29 @@ describe('User GraphQL Type', () => {
 
       const query = `
         query {
-          users {
-            id
-            name
-            email
-            createdAt
-            updatedAt
+          userLoad {
+            nodes {
+              id
+              name
+              email
+              createdAt
+              updatedAt
+            }
+            pagination {
+              totalCount
+              page
+              pageSize
+              hasMore
+            }
           }
         }
       `
 
       const result = await executeGraphQL(testServer, query)
 
-      expect((result.data?.users as any)?.[0]).toHaveProperty('createdAt')
-      expect((result.data?.users as any)?.[0]).toHaveProperty('updatedAt')
-      expect(new Date((result.data?.users as any)?.[0]?.createdAt)).toBeInstanceOf(Date)
+      expect(result.data?.userLoad.nodes[0]).toHaveProperty('createdAt')
+      expect(result.data?.userLoad.nodes[0]).toHaveProperty('updatedAt')
+      expect(new Date(result.data?.userLoad.nodes[0].createdAt)).toBeInstanceOf(Date)
     })
   })
 
@@ -97,7 +133,7 @@ describe('User GraphQL Type', () => {
 
       const query = `
         query {
-          user(id: 999) {
+          userGet(id: 999) {
             id
             name
             email
@@ -107,7 +143,7 @@ describe('User GraphQL Type', () => {
 
       const result = await executeGraphQL(testServer, query)
 
-      expect(result.data?.user).toBeNull()
+      expect(result.data?.userGet).toBeNull()
     })
 
     it('should return user by id', async () => {
@@ -121,7 +157,7 @@ describe('User GraphQL Type', () => {
 
       const query = `
         query {
-          user(id: ${createdUser.id}) {
+          userGet(id: ${createdUser.id}) {
             id
             name
             email
@@ -131,7 +167,7 @@ describe('User GraphQL Type', () => {
 
       const result = await executeGraphQL(testServer, query)
 
-      expect(result.data?.user).toMatchObject({
+      expect(result.data?.userGet).toMatchObject({
         id: createdUser.id,
         name: 'Test User',
         email: 'test@example.com',

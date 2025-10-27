@@ -1,26 +1,12 @@
-import type { PrismaClient } from '@prisma/client'
-import type { FastifyReply, FastifyRequest } from 'fastify'
-import type { Logger } from 'pino'
 import { prisma } from './db'
 import { AuthService } from './lib/auth/auth.service'
 import { JWTService } from './lib/auth/jwt'
 import { createContextLogger } from './lib/logger'
 import { generateTraceId } from './lib/logger/trace'
+import { PaginationService } from './service/paginations'
 import type { AuthenticatedUser } from './types/auth'
 
-export interface Context {
-  prisma: PrismaClient
-  logger: Logger
-  traceId: string
-  currentUser: AuthenticatedUser | null
-  req: FastifyRequest
-  res: FastifyReply
-}
-
-interface CreateContextParams {
-  req: FastifyRequest
-  res: FastifyReply
-}
+import type { Context, CreateContextParams } from './types.d.ts'
 
 export async function createContext({ req, res }: CreateContextParams): Promise<Context> {
   // Extrai ou gera trace ID da requisição
@@ -47,6 +33,10 @@ export async function createContext({ req, res }: CreateContextParams): Promise<
     logger.debug({ error }, 'Falha ao validar token de autenticação')
   }
 
+  const services = {
+    pagination: new PaginationService()
+  }
+
   return {
     prisma,
     logger,
@@ -54,5 +44,6 @@ export async function createContext({ req, res }: CreateContextParams): Promise<
     currentUser,
     req,
     res,
+    services,
   }
 }

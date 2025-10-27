@@ -1,10 +1,10 @@
 import { ApolloServer } from '@apollo/server'
 import type { PrismaClient } from '@prisma/client'
 import type { GraphQLSchema } from 'graphql'
-import type { Context } from '../../context'
 import { schema } from '../../graphql/schema'
 import { createContextLogger } from '../../lib/logger'
 import { generateTraceId } from '../../lib/logger/trace'
+import type { Context } from '../../types.d.ts'
 import type { AuthenticatedUser } from '../../types/auth'
 
 export interface CreateTestServerOptions {
@@ -45,7 +45,29 @@ export const createTestServer = async (
         traceId,
         currentUser,
         req: {} as any, // Mock FastifyRequest for tests
-        res: {} as any, // Mock FastifyReply for tests
+        res: {} as any, // Mock FastifyReply for tests,
+        services: {
+          pagination: {
+            parsePagination: (args?: { skip?: number; take?: number }) => ({
+              page: args?.skip ?? 0,
+              limit: args?.take ?? 10
+            }),
+            getPagination: async (prismaModel: any, pageArgs?: { skip?: number; take?: number }) => {
+              const totalCount = await prismaModel.count();
+              const { page, limit } = {
+                page: pageArgs?.skip ?? 0,
+                limit: pageArgs?.take ?? 10
+              };
+              
+              return {
+                totalCount,
+                page: page + 1,
+                pageSize: limit,
+                hasMore: (page + 1) * limit < totalCount
+              };
+            }
+          }
+        }
       }
 
       return server.executeOperation(

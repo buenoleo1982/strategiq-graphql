@@ -1,8 +1,11 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
+import type { DefaultArgs } from '@prisma/client/runtime/library'
 
 import { isProduction } from '@/support/environment'
 
-const prismaClientSingleton = () => {
+type T = PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
+
+const prismaClientSingleton = (): T => {
   return new PrismaClient()
 }
 
