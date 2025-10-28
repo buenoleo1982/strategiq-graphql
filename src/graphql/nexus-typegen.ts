@@ -4,7 +4,7 @@
  */
 
 
-import type { Context } from "./../context"
+import type { Context } from "./../types"
 import type { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
@@ -29,9 +29,29 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  PageArgs: { // input type
+    skip: number; // Int!
+    take: number; // Int!
+  }
+  UserArgs: { // input type
+    id?: number | null; // Int
+    name?: string | null; // String
+    username?: string | null; // String
+  }
+  UserInput: { // input type
+    email: string; // String!
+    name: string; // String!
+    password: string; // String!
+  }
+  UserOrderInput: { // input type
+    column: NexusGenEnums['UserOrderBy']; // UserOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
 }
 
 export interface NexusGenEnums {
+  OrderDirection: "ASC" | "DESC"
+  UserOrderBy: "ID" | "NAME" | "USERNAME"
 }
 
 export interface NexusGenScalars {
@@ -53,6 +73,12 @@ export interface NexusGenObjects {
     refreshToken: string; // String!
   }
   Mutation: {};
+  Pagination: { // root type
+    hasMore: boolean; // Boolean!
+    page: number; // Int!
+    pageSize: number; // Int!
+    totalCount: number; // Int!
+  }
   Query: {};
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -60,6 +86,10 @@ export interface NexusGenObjects {
     id: number; // Int!
     name: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  UserList: { // root type
+    nodes?: NexusGenRootTypes['User'][] | null; // [User!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
 }
 
@@ -71,7 +101,7 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   AuthResponse: { // field return type
@@ -91,10 +121,16 @@ export interface NexusGenFieldTypes {
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
+  Pagination: { // field return type
+    hasMore: boolean; // Boolean!
+    page: number; // Int!
+    pageSize: number; // Int!
+    totalCount: number; // Int!
+  }
   Query: { // field return type
     me: NexusGenRootTypes['User'] | null; // User
-    user: NexusGenRootTypes['User'] | null; // User
-    users: Array<NexusGenRootTypes['User'] | null> | null; // [User]
+    userGet: NexusGenRootTypes['User'] | null; // User
+    userLoad: NexusGenRootTypes['UserList'] | null; // UserList
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -102,6 +138,10 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
     name: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  UserList: { // field return type
+    nodes: NexusGenRootTypes['User'][] | null; // [User!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
 }
 
@@ -123,10 +163,16 @@ export interface NexusGenFieldTypeNames {
     register: 'AuthResponse'
     updateUser: 'User'
   }
+  Pagination: { // field return type name
+    hasMore: 'Boolean'
+    page: 'Int'
+    pageSize: 'Int'
+    totalCount: 'Int'
+  }
   Query: { // field return type name
     me: 'User'
-    user: 'User'
-    users: 'User'
+    userGet: 'User'
+    userLoad: 'UserList'
   }
   User: { // field return type name
     createdAt: 'DateTime'
@@ -134,6 +180,10 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
     name: 'String'
     updatedAt: 'DateTime'
+  }
+  UserList: { // field return type name
+    nodes: 'User'
+    pagination: 'Pagination'
   }
 }
 
@@ -166,8 +216,13 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    user: { // args
-      id?: number | null; // Int
+    userGet: { // args
+      id: number; // Int!
+    }
+    userLoad: { // args
+      filterArgs?: NexusGenInputs['UserArgs'] | null; // UserArgs
+      order?: NexusGenInputs['UserOrderInput'] | null; // UserOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
     }
   }
 }
@@ -180,9 +235,9 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

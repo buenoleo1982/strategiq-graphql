@@ -1,5 +1,5 @@
-import { join } from 'node:path'
 import { makeSchema } from 'nexus'
+import { join } from 'node:path'
 import * as types from './types'
 
 export const schema = makeSchema({
@@ -9,7 +9,7 @@ export const schema = makeSchema({
     typegen: join(process.cwd(), 'src', 'graphql', 'nexus-typegen.ts'),
   },
   contextType: {
-    module: join(process.cwd(), 'src', 'context.ts'),
+    module: join(process.cwd(), 'src', 'types.d.ts'),
     export: 'Context',
   },
   sourceTypes: {

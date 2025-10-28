@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql'
-import type { Context } from '@/context'
+
+import type { Context } from '@/types.d.ts'
 
 /**
  * Guard que verifica se o usuário está autenticado

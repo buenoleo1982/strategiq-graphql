@@ -1,20 +1,25 @@
-import { extendType } from 'nexus'
-import { UserQueryResolvers } from '@/graphql/resolvers'
+import { userGet, userLoad } from '@/graphql/resolvers/user/query'
+import { arg, extendType, intArg, nonNull } from 'nexus'
+import { PageArgs } from '../utils'
+import { User, UserArgs, UserList, UserOrderInput } from './type'
 
 export const UserQuery = extendType({
   type: 'Query',
-  definition(t) {
-    t.list.field('users', {
-      type: 'User',
-      resolve: UserQueryResolvers.users,
+  definition: t => {
+    t.field('userGet', {
+      type: User,
+      args: { id: nonNull(intArg()) },
+      resolve: userGet,
     })
 
-    t.field('user', {
-      type: 'User',
+    t.field('userLoad', {
+      type: UserList,
       args: {
-        id: 'Int',
+        filterArgs: arg({ type: UserArgs }),
+        order: arg({ type: UserOrderInput }),
+        pageArgs: arg({ type: PageArgs }),
       },
-      resolve: UserQueryResolvers.user,
+      resolve: userLoad,
     })
   },
 })

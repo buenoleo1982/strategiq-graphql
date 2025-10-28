@@ -25,10 +25,27 @@ type Mutation {
   updateUser(email: String, id: Int!, name: String): User
 }
 
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+input PageArgs {
+  skip: Int!
+  take: Int!
+}
+
+type Pagination {
+  hasMore: Boolean!
+  page: Int!
+  pageSize: Int!
+  totalCount: Int!
+}
+
 type Query {
   me: User
-  user(id: Int): User
-  users: [User]
+  userGet(id: Int!): User
+  userLoad(filterArgs: UserArgs, order: UserOrderInput, pageArgs: PageArgs): UserList
 }
 
 type User {
@@ -37,4 +54,32 @@ type User {
   id: Int!
   name: String!
   updatedAt: DateTime!
+}
+
+input UserArgs {
+  id: Int
+  name: String
+  username: String
+}
+
+input UserInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+type UserList {
+  nodes: [User!]
+  pagination: Pagination!
+}
+
+enum UserOrderBy {
+  ID
+  NAME
+  USERNAME
+}
+
+input UserOrderInput {
+  column: UserOrderBy!
+  direction: OrderDirection! = ASC
 }
