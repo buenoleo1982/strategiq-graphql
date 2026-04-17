@@ -48,26 +48,26 @@ export const createTestServer = async (
         res: {} as any, // Mock FastifyReply for tests,
         services: {
           pagination: {
-            parsePagination: (args?: { skip?: number; take?: number }) => ({
+            parsePagination: (args?: { skip?: number; take?: number } | null) => ({
               page: args?.skip ?? 0,
-              limit: args?.take ?? 10
+              limit: args?.take ?? 10,
             }),
-            getPagination: async (prismaModel: any, pageArgs?: { skip?: number; take?: number }) => {
-              const totalCount = await prismaModel.count();
+            getPagination: async (prismaModel: any, pageArgs?: { skip?: number; take?: number } | null) => {
+              const totalCount = await prismaModel.count()
               const { page, limit } = {
                 page: pageArgs?.skip ?? 0,
-                limit: pageArgs?.take ?? 10
-              };
-              
+                limit: pageArgs?.take ?? 10,
+              }
+
               return {
                 totalCount,
                 page: page + 1,
                 pageSize: limit,
-                hasMore: (page + 1) * limit < totalCount
+                hasMore: (page + 1) * limit < totalCount,
               };
-            }
-          }
-        }
+            },
+          },
+        },
       }
 
       return server.executeOperation(

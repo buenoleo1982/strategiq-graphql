@@ -14,11 +14,13 @@ export async function seedUsers(prisma: PrismaClient) {
         name: 'Admin',
         email: adminEmail,
         password,
+        role: 'ADMIN',
       },
       {
         email: moderatorEmail,
         name: 'Moderator',
         password,
+        role: 'MANAGER',
       },
     ],
   })

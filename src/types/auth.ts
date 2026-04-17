@@ -1,3 +1,5 @@
+export type UserRole = 'ADMIN' | 'QUALITY_MANAGER' | 'MANAGER' | 'ANALYST'
+
 export interface TokenPayload {
   userId: number
   email: string
@@ -23,4 +25,5 @@ export interface AuthenticatedUser {
   id: number
   email: string
   name: string
+  role: UserRole
 }

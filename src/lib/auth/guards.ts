@@ -1,6 +1,7 @@
 import { GraphQLError } from 'graphql'
 
 import type { Context } from '@/types.d.ts'
+import type { UserRole } from '@/types/auth'
 
 /**
  * Guard que verifica se o usuário está autenticado
@@ -25,6 +26,19 @@ export function requireOwnership(ctx: Context, resourceUserId: number): void {
 
   if (ctx.currentUser?.id !== resourceUserId) {
     throw new GraphQLError('Você não tem permissão para acessar este recurso', {
+      extensions: { code: 'FORBIDDEN' },
+    })
+  }
+}
+
+/**
+ * Guard que verifica se o usuário possui um dos papéis exigidos
+ */
+export function requireRole(ctx: Context, ...roles: UserRole[]): void {
+  requireAuth(ctx)
+
+  if (!ctx.currentUser || !roles.includes(ctx.currentUser.role)) {
+    throw new GraphQLError('Você não tem permissão para executar esta operação', {
       extensions: { code: 'FORBIDDEN' },
     })
   }

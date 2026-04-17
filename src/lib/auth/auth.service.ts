@@ -126,6 +126,7 @@ export class AuthService {
           id: true,
           email: true,
           name: true,
+          role: true,
         },
       })
 
@@ -163,11 +164,13 @@ export class AuthService {
         name,
         email,
         password: hashedPassword,
+        role: 'ANALYST',
       },
       select: {
         id: true,
         name: true,
         email: true,
+        role: true,
       },
     })
 

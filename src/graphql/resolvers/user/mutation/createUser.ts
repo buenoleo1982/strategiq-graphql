@@ -1,10 +1,10 @@
 import type { FieldResolver } from 'nexus'
-import { requireAuth } from '@/lib/auth/guards'
+import { requireRole } from '@/lib/auth/guards'
 import { PasswordService } from '@/lib/auth/password'
 
 export const createUser: FieldResolver<'Mutation', 'createUser'> = async (_, args, ctx) => {
-  // Apenas usuários autenticados podem criar novos usuários
-  requireAuth(ctx)
+  // Apenas administradores podem criar novos usuários
+  requireRole(ctx, 'ADMIN')
 
   const { name, email, password } = args
 
@@ -17,6 +17,7 @@ export const createUser: FieldResolver<'Mutation', 'createUser'> = async (_, arg
       name,
       email,
       password: hashedPassword,
+      role: 'ANALYST',
     },
   })
 }

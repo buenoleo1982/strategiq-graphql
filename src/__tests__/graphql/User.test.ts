@@ -215,6 +215,7 @@ describe('User GraphQL Type', () => {
             id: authenticatedUser.id,
             email: authenticatedUser.email,
             name: authenticatedUser.name,
+            role: 'ADMIN',
           },
         }
       )
@@ -269,6 +270,7 @@ describe('User GraphQL Type', () => {
             id: authenticatedUser.id,
             email: authenticatedUser.email,
             name: authenticatedUser.name,
+            role: 'ADMIN',
           },
         }
       )
@@ -338,6 +340,7 @@ describe('User GraphQL Type', () => {
             id: anotherUser.id,
             email: anotherUser.email,
             name: anotherUser.name,
+            role: 'ANALYST',
           },
         }
       )
@@ -372,6 +375,7 @@ describe('User GraphQL Type', () => {
             id: createdUser.id,
             email: createdUser.email,
             name: createdUser.name,
+            role: 'ANALYST',
           },
         }
       )
@@ -404,6 +408,7 @@ describe('User GraphQL Type', () => {
             id: 999,
             email: 'ghost@example.com',
             name: 'Ghost User',
+            role: 'ANALYST',
           },
         }
       )
@@ -468,6 +473,7 @@ describe('User GraphQL Type', () => {
             id: anotherUser.id,
             email: anotherUser.email,
             name: anotherUser.name,
+            role: 'ANALYST',
           },
         }
       )
@@ -502,6 +508,7 @@ describe('User GraphQL Type', () => {
             id: createdUser.id,
             email: createdUser.email,
             name: createdUser.name,
+            role: 'ANALYST',
           },
         }
       )
@@ -540,6 +547,7 @@ describe('User GraphQL Type', () => {
             id: 999,
             email: 'ghost@example.com',
             name: 'Ghost User',
+            role: 'ANALYST',
           },
         }
       )

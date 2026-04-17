@@ -53,6 +53,7 @@ type User {
   email: String!
   id: Int!
   name: String!
+  role: UserRole!
   updatedAt: DateTime!
 }
 
@@ -82,4 +83,11 @@ enum UserOrderBy {
 input UserOrderInput {
   column: UserOrderBy!
   direction: OrderDirection! = ASC
+}
+
+enum UserRole {
+  ADMIN
+  ANALYST
+  MANAGER
+  QUALITY_MANAGER
 }

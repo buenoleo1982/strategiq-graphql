@@ -1,12 +1,18 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
 import { OrderDirection, Pagination } from '../utils'
 
+export const UserRoleEnum = enumType({
+  name: 'UserRole',
+  members: ['ADMIN', 'QUALITY_MANAGER', 'MANAGER', 'ANALYST'],
+})
+
 export const User = objectType({
   name: 'User',
   definition(t) {
     t.nonNull.int('id')
     t.nonNull.string('name')
     t.nonNull.string('email')
+    t.nonNull.field('role', { type: UserRoleEnum })
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

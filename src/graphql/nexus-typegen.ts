@@ -52,6 +52,7 @@ export interface NexusGenInputs {
 export interface NexusGenEnums {
   OrderDirection: "ASC" | "DESC"
   UserOrderBy: "ID" | "NAME" | "USERNAME"
+  UserRole: "ADMIN" | "ANALYST" | "MANAGER" | "QUALITY_MANAGER"
 }
 
 export interface NexusGenScalars {
@@ -85,6 +86,7 @@ export interface NexusGenObjects {
     email: string; // String!
     id: number; // Int!
     name: string; // String!
+    role: NexusGenEnums['UserRole']; // UserRole!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   UserList: { // root type
@@ -137,6 +139,7 @@ export interface NexusGenFieldTypes {
     email: string; // String!
     id: number; // Int!
     name: string; // String!
+    role: NexusGenEnums['UserRole']; // UserRole!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   UserList: { // field return type
@@ -179,6 +182,7 @@ export interface NexusGenFieldTypeNames {
     email: 'String'
     id: 'Int'
     name: 'String'
+    role: 'UserRole'
     updatedAt: 'DateTime'
   }
   UserList: { // field return type name
