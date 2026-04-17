@@ -35,6 +35,41 @@ input IndicatorArgs {
   ownerId: Int
 }
 
+type IndicatorEntry {
+  collectedAt: DateTime!
+  createdAt: DateTime!
+  id: Int!
+  indicatorId: Int!
+  notes: String
+  source: String
+  updatedAt: DateTime!
+  value: Float!
+}
+
+input IndicatorEntryArgs {
+  id: Int
+  indicatorId: Int
+  source: String
+}
+
+type IndicatorEntryList {
+  nodes: [IndicatorEntry!]
+  pagination: Pagination!
+}
+
+enum IndicatorEntryOrderBy {
+  COLLECTED_AT
+  CREATED_AT
+  ID
+  INDICATOR_ID
+  VALUE
+}
+
+input IndicatorEntryOrderInput {
+  column: IndicatorEntryOrderBy!
+  direction: OrderDirection! = ASC
+}
+
 enum IndicatorFrequency {
   DAILY
   MONTHLY
@@ -63,9 +98,11 @@ input IndicatorOrderInput {
 
 type Mutation {
   createIndicator(description: String, formula: String, frequency: IndicatorFrequency, name: String!, ownerId: Int, targetValue: Float, unit: String): Indicator
+  createIndicatorEntry(collectedAt: DateTime, indicatorId: Int!, notes: String, source: String, value: Float!): IndicatorEntry
   createStrategicObjective(description: String, endsAt: DateTime, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String!): StrategicObjective
   createUser(email: String!, name: String!, password: String!): User
   deleteIndicator(id: Int!): Indicator
+  deleteIndicatorEntry(id: Int!): IndicatorEntry
   deleteStrategicObjective(id: Int!): StrategicObjective
   deleteUser(id: Int!): User
   login(email: String!, password: String!): AuthResponse!
@@ -73,6 +110,7 @@ type Mutation {
   refreshToken(refreshToken: String!): AuthTokens!
   register(email: String!, name: String!, password: String!): AuthResponse!
   updateIndicator(description: String, formula: String, frequency: IndicatorFrequency, id: Int!, name: String, ownerId: Int, targetValue: Float, unit: String): Indicator
+  updateIndicatorEntry(collectedAt: DateTime, id: Int!, indicatorId: Int, notes: String, source: String, value: Float): IndicatorEntry
   updateStrategicObjective(description: String, endsAt: DateTime, id: Int!, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String): StrategicObjective
   updateUser(email: String, id: Int!, name: String): User
 }
@@ -95,6 +133,8 @@ type Pagination {
 }
 
 type Query {
+  indicatorEntryGet(id: Int!): IndicatorEntry
+  indicatorEntryLoad(filterArgs: IndicatorEntryArgs, order: IndicatorEntryOrderInput, pageArgs: PageArgs): IndicatorEntryList
   indicatorGet(id: Int!): Indicator
   indicatorLoad(filterArgs: IndicatorArgs, order: IndicatorOrderInput, pageArgs: PageArgs): IndicatorList
   me: User

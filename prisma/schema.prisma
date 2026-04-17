@@ -71,6 +71,19 @@ model Indicator {
   targetValue Float?
   frequency   IndicatorFrequency @default(MONTHLY)
   ownerId     Int?
+  entries     IndicatorEntry[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
+}
+
+model IndicatorEntry {
+  id          Int       @id @default(autoincrement())
+  indicatorId Int
+  indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  value       Float
+  collectedAt DateTime  @default(now())
+  source      String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
