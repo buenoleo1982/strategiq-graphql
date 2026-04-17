@@ -33,6 +33,17 @@ export interface NexusGenInputs {
     skip: number; // Int!
     take: number; // Int!
   }
+  StrategicObjectiveArgs: { // input type
+    id?: number | null; // Int
+    ownerId?: number | null; // Int
+    priority?: NexusGenEnums['StrategicObjectivePriority'] | null; // StrategicObjectivePriority
+    status?: NexusGenEnums['StrategicObjectiveStatus'] | null; // StrategicObjectiveStatus
+    title?: string | null; // String
+  }
+  StrategicObjectiveOrderInput: { // input type
+    column: NexusGenEnums['StrategicObjectiveOrderBy']; // StrategicObjectiveOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
   UserArgs: { // input type
     id?: number | null; // Int
     name?: string | null; // String
@@ -51,6 +62,9 @@ export interface NexusGenInputs {
 
 export interface NexusGenEnums {
   OrderDirection: "ASC" | "DESC"
+  StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
+  StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
+  StrategicObjectiveStatus: "ACTIVE" | "ARCHIVED" | "COMPLETED" | "DRAFT"
   UserOrderBy: "ID" | "NAME" | "USERNAME"
   UserRole: "ADMIN" | "ANALYST" | "MANAGER" | "QUALITY_MANAGER"
 }
@@ -81,6 +95,22 @@ export interface NexusGenObjects {
     totalCount: number; // Int!
   }
   Query: {};
+  StrategicObjective: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    ownerId?: number | null; // Int
+    priority: NexusGenEnums['StrategicObjectivePriority']; // StrategicObjectivePriority!
+    startsAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    status: NexusGenEnums['StrategicObjectiveStatus']; // StrategicObjectiveStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  StrategicObjectiveList: { // root type
+    nodes?: NexusGenRootTypes['StrategicObjective'][] | null; // [StrategicObjective!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -115,12 +145,15 @@ export interface NexusGenFieldTypes {
     refreshToken: string; // String!
   }
   Mutation: { // field return type
+    createStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     createUser: NexusGenRootTypes['User'] | null; // User
+    deleteStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     deleteUser: NexusGenRootTypes['User'] | null; // User
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     logout: boolean; // Boolean!
     refreshToken: NexusGenRootTypes['AuthTokens']; // AuthTokens!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    updateStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
   Pagination: { // field return type
@@ -131,8 +164,26 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     me: NexusGenRootTypes['User'] | null; // User
+    strategicObjectiveGet: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
+    strategicObjectiveLoad: NexusGenRootTypes['StrategicObjectiveList'] | null; // StrategicObjectiveList
     userGet: NexusGenRootTypes['User'] | null; // User
     userLoad: NexusGenRootTypes['UserList'] | null; // UserList
+  }
+  StrategicObjective: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description: string | null; // String
+    endsAt: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    ownerId: number | null; // Int
+    priority: NexusGenEnums['StrategicObjectivePriority']; // StrategicObjectivePriority!
+    startsAt: NexusGenScalars['DateTime'] | null; // DateTime
+    status: NexusGenEnums['StrategicObjectiveStatus']; // StrategicObjectiveStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  StrategicObjectiveList: { // field return type
+    nodes: NexusGenRootTypes['StrategicObjective'][] | null; // [StrategicObjective!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -158,12 +209,15 @@ export interface NexusGenFieldTypeNames {
     refreshToken: 'String'
   }
   Mutation: { // field return type name
+    createStrategicObjective: 'StrategicObjective'
     createUser: 'User'
+    deleteStrategicObjective: 'StrategicObjective'
     deleteUser: 'User'
     login: 'AuthResponse'
     logout: 'Boolean'
     refreshToken: 'AuthTokens'
     register: 'AuthResponse'
+    updateStrategicObjective: 'StrategicObjective'
     updateUser: 'User'
   }
   Pagination: { // field return type name
@@ -174,8 +228,26 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     me: 'User'
+    strategicObjectiveGet: 'StrategicObjective'
+    strategicObjectiveLoad: 'StrategicObjectiveList'
     userGet: 'User'
     userLoad: 'UserList'
+  }
+  StrategicObjective: { // field return type name
+    createdAt: 'DateTime'
+    description: 'String'
+    endsAt: 'DateTime'
+    id: 'Int'
+    ownerId: 'Int'
+    priority: 'StrategicObjectivePriority'
+    startsAt: 'DateTime'
+    status: 'StrategicObjectiveStatus'
+    title: 'String'
+    updatedAt: 'DateTime'
+  }
+  StrategicObjectiveList: { // field return type name
+    nodes: 'StrategicObjective'
+    pagination: 'Pagination'
   }
   User: { // field return type name
     createdAt: 'DateTime'
@@ -193,10 +265,22 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createStrategicObjective: { // args
+      description?: string | null; // String
+      endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      ownerId?: number | null; // Int
+      priority?: NexusGenEnums['StrategicObjectivePriority'] | null; // StrategicObjectivePriority
+      startsAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      status?: NexusGenEnums['StrategicObjectiveStatus'] | null; // StrategicObjectiveStatus
+      title: string; // String!
+    }
     createUser: { // args
       email: string; // String!
       name: string; // String!
       password: string; // String!
+    }
+    deleteStrategicObjective: { // args
+      id: number; // Int!
     }
     deleteUser: { // args
       id: number; // Int!
@@ -213,6 +297,16 @@ export interface NexusGenArgTypes {
       name: string; // String!
       password: string; // String!
     }
+    updateStrategicObjective: { // args
+      description?: string | null; // String
+      endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      id: number; // Int!
+      ownerId?: number | null; // Int
+      priority?: NexusGenEnums['StrategicObjectivePriority'] | null; // StrategicObjectivePriority
+      startsAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      status?: NexusGenEnums['StrategicObjectiveStatus'] | null; // StrategicObjectiveStatus
+      title?: string | null; // String
+    }
     updateUser: { // args
       email?: string | null; // String
       id: number; // Int!
@@ -220,6 +314,14 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    strategicObjectiveGet: { // args
+      id: number; // Int!
+    }
+    strategicObjectiveLoad: { // args
+      filterArgs?: NexusGenInputs['StrategicObjectiveArgs'] | null; // StrategicObjectiveArgs
+      order?: NexusGenInputs['StrategicObjectiveOrderInput'] | null; // StrategicObjectiveOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
     userGet: { // args
       id: number; // Int!
     }

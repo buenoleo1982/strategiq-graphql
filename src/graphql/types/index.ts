@@ -1,5 +1,5 @@
 export * from './auth'
 export * from './utils'
 export * from './Scalars'
+export * from './strategic-objective'
 export * from './user'
-

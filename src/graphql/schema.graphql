@@ -16,12 +16,15 @@ type AuthTokens {
 scalar DateTime
 
 type Mutation {
+  createStrategicObjective(description: String, endsAt: DateTime, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String!): StrategicObjective
   createUser(email: String!, name: String!, password: String!): User
+  deleteStrategicObjective(id: Int!): StrategicObjective
   deleteUser(id: Int!): User
   login(email: String!, password: String!): AuthResponse!
   logout: Boolean!
   refreshToken(refreshToken: String!): AuthTokens!
   register(email: String!, name: String!, password: String!): AuthResponse!
+  updateStrategicObjective(description: String, endsAt: DateTime, id: Int!, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String): StrategicObjective
   updateUser(email: String, id: Int!, name: String): User
 }
 
@@ -44,8 +47,65 @@ type Pagination {
 
 type Query {
   me: User
+  strategicObjectiveGet(id: Int!): StrategicObjective
+  strategicObjectiveLoad(filterArgs: StrategicObjectiveArgs, order: StrategicObjectiveOrderInput, pageArgs: PageArgs): StrategicObjectiveList
   userGet(id: Int!): User
   userLoad(filterArgs: UserArgs, order: UserOrderInput, pageArgs: PageArgs): UserList
+}
+
+type StrategicObjective {
+  createdAt: DateTime!
+  description: String
+  endsAt: DateTime
+  id: Int!
+  ownerId: Int
+  priority: StrategicObjectivePriority!
+  startsAt: DateTime
+  status: StrategicObjectiveStatus!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input StrategicObjectiveArgs {
+  id: Int
+  ownerId: Int
+  priority: StrategicObjectivePriority
+  status: StrategicObjectiveStatus
+  title: String
+}
+
+type StrategicObjectiveList {
+  nodes: [StrategicObjective!]
+  pagination: Pagination!
+}
+
+enum StrategicObjectiveOrderBy {
+  CREATED_AT
+  ENDS_AT
+  ID
+  PRIORITY
+  STARTS_AT
+  STATUS
+  TITLE
+}
+
+input StrategicObjectiveOrderInput {
+  column: StrategicObjectiveOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum StrategicObjectivePriority {
+  CRITICAL
+  HIGH
+  LOW
+  MEDIUM
+}
+
+enum StrategicObjectiveStatus {
+  ACTIVE
+  ARCHIVED
+  COMPLETED
+  DRAFT
 }
 
 type User {
