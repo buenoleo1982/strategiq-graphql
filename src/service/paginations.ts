@@ -18,9 +18,9 @@ export class PaginationService {
   // Você não precisa mais do 'db' no construtor se o Prisma Client for usado diretamente na chamada
   // Se for injetar o Prisma Client (boa prática), use-o:
   // constructor(private readonly db: PrismaClient) {}
-  
+
   // Vamos assumir que você prefere uma classe limpa e genérica para a lógica de paginação:
-  
+
   parsePagination(pageArgs: LocalPageArgs | undefined | null) {
     if (!pageArgs) {
       return DEFAULT_PAGINATION
@@ -39,19 +39,17 @@ export class PaginationService {
    * @returns {Promise<{ hasMore: boolean, page: number, pageSize: number, totalCount: number}>}
    */
   async getPagination<T extends PrismaModelClient, C extends Parameters<T['count']>[0]>(
-    entityClient: T, 
+    entityClient: T,
     pageArgs: LocalPageArgs | undefined | null,
     countArgs?: C
   ) {
     const { limit, page } = this.parsePagination(pageArgs)
-   
+
     const totalCount = await entityClient.count(countArgs) as number
-    
+
     const finalPage = page + 1
-    
+
     const hasMore = (finalPage * limit) < totalCount
-    console.log({ totalCount })
-    console.log({ finalPage, limit, hasMore })
 
     return {
       pageSize: limit,
