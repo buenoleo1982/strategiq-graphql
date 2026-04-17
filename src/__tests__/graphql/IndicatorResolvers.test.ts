@@ -54,6 +54,7 @@ describe('Indicator resolvers', () => {
       targetValue: 5,
       frequency: 'MONTHLY',
       ownerId: 1,
+      entries: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -111,6 +112,14 @@ describe('Indicator resolvers', () => {
         targetValue: 5,
         frequency: 'MONTHLY',
         ownerId: 1,
+        entries: [
+          {
+            id: 11,
+            indicatorId: 1,
+            value: 6,
+            collectedAt: new Date(),
+          },
+        ],
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -131,7 +140,10 @@ describe('Indicator resolvers', () => {
     }
     expect(ctx.services.pagination.getPagination).toHaveBeenCalled()
     expect(ctx.prisma.indicator.findMany).toHaveBeenCalled()
-    expect(result.nodes).toHaveLength(1)
+    expect(result.nodes ?? []).toHaveLength(1)
+    expect(result.nodes?.[0]).toMatchObject({
+      targetValue: 5,
+    })
   })
 
   it('should get indicator by id when authenticated', async () => {
@@ -151,6 +163,14 @@ describe('Indicator resolvers', () => {
       targetValue: 5,
       frequency: 'MONTHLY',
       ownerId: 1,
+      entries: [
+        {
+          id: 11,
+          indicatorId: 1,
+          value: 6,
+          collectedAt: new Date(),
+        },
+      ],
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -183,6 +203,7 @@ describe('Indicator resolvers', () => {
       targetValue: 4,
       frequency: 'MONTHLY',
       ownerId: 1,
+      entries: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -220,6 +241,7 @@ describe('Indicator resolvers', () => {
       targetValue: 5,
       frequency: 'MONTHLY',
       ownerId: null,
+      entries: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     })

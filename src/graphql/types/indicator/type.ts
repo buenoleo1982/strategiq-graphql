@@ -1,9 +1,22 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
 import { OrderDirection, Pagination } from '../utils'
 
+type IndicatorWithLatestEntry = {
+  targetValue?: number | null
+  entries?: Array<{
+    value: number
+    collectedAt: Date
+  }>
+}
+
 export const IndicatorFrequencyEnum = enumType({
   name: 'IndicatorFrequency',
   members: ['DAILY', 'WEEKLY', 'MONTHLY', 'QUARTERLY', 'YEARLY'],
+})
+
+export const IndicatorTargetStatusEnum = enumType({
+  name: 'IndicatorTargetStatus',
+  members: ['ON_TARGET', 'BELOW_TARGET', 'NO_TARGET', 'NO_DATA'],
 })
 
 export const Indicator = objectType({
@@ -17,6 +30,33 @@ export const Indicator = objectType({
     t.float('targetValue')
     t.nonNull.field('frequency', { type: IndicatorFrequencyEnum })
     t.int('ownerId')
+    t.float('latestEntryValue', {
+      resolve: indicator => (indicator as IndicatorWithLatestEntry).entries?.[0]?.value ?? null,
+    })
+    t.field('latestEntryCollectedAt', {
+      type: 'DateTime',
+      resolve: indicator => (indicator as IndicatorWithLatestEntry).entries?.[0]?.collectedAt ?? null,
+    })
+    t.nonNull.field('latestEntryStatus', {
+      type: IndicatorTargetStatusEnum,
+      resolve: indicator => {
+        const indicatorWithLatestEntry = indicator as IndicatorWithLatestEntry
+        const latestEntry = indicatorWithLatestEntry.entries?.[0]
+
+        if (!latestEntry) {
+          return 'NO_DATA'
+        }
+
+        if (
+          indicatorWithLatestEntry.targetValue === null ||
+          indicatorWithLatestEntry.targetValue === undefined
+        ) {
+          return 'NO_TARGET'
+        }
+
+        return latestEntry.value >= indicatorWithLatestEntry.targetValue ? 'ON_TARGET' : 'BELOW_TARGET'
+      },
+    })
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

@@ -83,6 +83,7 @@ export interface NexusGenEnums {
   IndicatorEntryOrderBy: "COLLECTED_AT" | "CREATED_AT" | "ID" | "INDICATOR_ID" | "VALUE"
   IndicatorFrequency: "DAILY" | "MONTHLY" | "QUARTERLY" | "WEEKLY" | "YEARLY"
   IndicatorOrderBy: "CREATED_AT" | "FREQUENCY" | "ID" | "NAME" | "TARGET_VALUE"
+  IndicatorTargetStatus: "BELOW_TARGET" | "NO_DATA" | "NO_TARGET" | "ON_TARGET"
   OrderDirection: "ASC" | "DESC"
   StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
   StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
@@ -202,6 +203,9 @@ export interface NexusGenFieldTypes {
     formula: string | null; // String
     frequency: NexusGenEnums['IndicatorFrequency']; // IndicatorFrequency!
     id: number; // Int!
+    latestEntryCollectedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    latestEntryStatus: NexusGenEnums['IndicatorTargetStatus']; // IndicatorTargetStatus!
+    latestEntryValue: number | null; // Float
     name: string; // String!
     ownerId: number | null; // Int
     targetValue: number | null; // Float
@@ -306,6 +310,9 @@ export interface NexusGenFieldTypeNames {
     formula: 'String'
     frequency: 'IndicatorFrequency'
     id: 'Int'
+    latestEntryCollectedAt: 'DateTime'
+    latestEntryStatus: 'IndicatorTargetStatus'
+    latestEntryValue: 'Float'
     name: 'String'
     ownerId: 'Int'
     targetValue: 'Float'

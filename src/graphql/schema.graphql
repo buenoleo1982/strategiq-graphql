@@ -21,6 +21,9 @@ type Indicator {
   formula: String
   frequency: IndicatorFrequency!
   id: Int!
+  latestEntryCollectedAt: DateTime
+  latestEntryStatus: IndicatorTargetStatus!
+  latestEntryValue: Float
   name: String!
   ownerId: Int
   targetValue: Float
@@ -94,6 +97,13 @@ enum IndicatorOrderBy {
 input IndicatorOrderInput {
   column: IndicatorOrderBy!
   direction: OrderDirection! = ASC
+}
+
+enum IndicatorTargetStatus {
+  BELOW_TARGET
+  NO_DATA
+  NO_TARGET
+  ON_TARGET
 }
 
 type Mutation {
