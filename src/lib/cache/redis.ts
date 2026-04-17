@@ -1,16 +1,18 @@
 import Redis from 'ioredis'
 
+import { env } from '@/support/config'
+
 /**
  * Singleton para gerenciar a conexão com Redis
  */
 class RedisClient {
-  private static instance: Redis | null = null
+  private static instance: Redis | null
 
   private constructor() {}
 
   static getInstance(): Redis {
     if (!this.instance) {
-      const url = process.env.REDIS_URL || 'redis://localhost:6379'
+      const url = `redis://${env.REDIS_HOST}:${env.REDIS_PORT}`
       this.instance = new Redis(url)
     }
     return this.instance

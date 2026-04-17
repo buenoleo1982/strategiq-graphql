@@ -1,12 +1,13 @@
 import { jwtVerify, SignJWT } from 'jose'
 import type { TokenPayload } from '@/types/auth'
+import { env } from '@/support/config'
 
 /**
  * Serviço de geração e validação de tokens JWT
  */
 export class JWTService {
   private static getSecret(): Uint8Array {
-    const secret = process.env.JWT_SECRET
+    const secret = env.JWT_SECRET
     if (!secret) {
       throw new Error('JWT_SECRET não configurado')
     }

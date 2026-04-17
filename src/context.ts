@@ -34,7 +34,7 @@ export async function createContext({ req, res }: CreateContextParams): Promise<
   }
 
   const services = {
-    pagination: new PaginationService()
+    pagination: new PaginationService(),
   }
 
   return {

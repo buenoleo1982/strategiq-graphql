@@ -16,13 +16,11 @@ export const LOG_LEVELS = {
   FATAL: 'fatal',
 } as const
 
-export type LogLevel = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS]
 
 /**
  * Configuração do ambiente
  */
-const logLevel = (process.env.LOG_LEVEL ||
-  (isTesting ? 'silent' : isDev ? 'debug' : 'info')) as LogLevel
+const logLevel = (isTesting ? 'silent' : (isDev ? 'debug' : 'info'))
 
 /**
  * Hook para filtrar logs de introspection do Apollo Server

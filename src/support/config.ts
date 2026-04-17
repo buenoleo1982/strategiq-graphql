@@ -10,6 +10,11 @@ const envSchema = z.object({
   LOG_FREQUENCY: z.enum(['daily', 'hourly']).default('daily'),
   LOG_MAX_FILES: z.coerce.number().default(7),
   LOG_MAX_SIZE: z.string().default('10M'),
+  LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+
+  JWT_SECRET: z.string().min(1, 'JWT_SECRET é obrigatório'),
+  REDIS_PORT: z.string().default('6379'),
+  REDIS_HOST: z.string().default('localhost'),
 })
 
 export const env = envSchema.parse(process.env)
