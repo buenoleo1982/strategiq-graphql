@@ -31,6 +31,14 @@ enum StrategicObjectivePriority {
   CRITICAL
 }
 
+enum IndicatorFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -52,4 +60,17 @@ model StrategicObjective {
   ownerId     Int?
   createdAt   DateTime                   @default(now())
   updatedAt   DateTime                   @updatedAt
+}
+
+model Indicator {
+  id          Int                @id @default(autoincrement())
+  name        String
+  description String?
+  formula     String?
+  unit        String?
+  targetValue Float?
+  frequency   IndicatorFrequency @default(MONTHLY)
+  ownerId     Int?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }

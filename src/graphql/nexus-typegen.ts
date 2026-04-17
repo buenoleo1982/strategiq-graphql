@@ -29,6 +29,16 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  IndicatorArgs: { // input type
+    frequency?: NexusGenEnums['IndicatorFrequency'] | null; // IndicatorFrequency
+    id?: number | null; // Int
+    name?: string | null; // String
+    ownerId?: number | null; // Int
+  }
+  IndicatorOrderInput: { // input type
+    column: NexusGenEnums['IndicatorOrderBy']; // IndicatorOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
   PageArgs: { // input type
     skip: number; // Int!
     take: number; // Int!
@@ -61,6 +71,8 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  IndicatorFrequency: "DAILY" | "MONTHLY" | "QUARTERLY" | "WEEKLY" | "YEARLY"
+  IndicatorOrderBy: "CREATED_AT" | "FREQUENCY" | "ID" | "NAME" | "TARGET_VALUE"
   OrderDirection: "ASC" | "DESC"
   StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
   StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
@@ -86,6 +98,22 @@ export interface NexusGenObjects {
   AuthTokens: { // root type
     accessToken: string; // String!
     refreshToken: string; // String!
+  }
+  Indicator: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    formula?: string | null; // String
+    frequency: NexusGenEnums['IndicatorFrequency']; // IndicatorFrequency!
+    id: number; // Int!
+    name: string; // String!
+    ownerId?: number | null; // Int
+    targetValue?: number | null; // Float
+    unit?: string | null; // String
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  IndicatorList: { // root type
+    nodes?: NexusGenRootTypes['Indicator'][] | null; // [Indicator!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Mutation: {};
   Pagination: { // root type
@@ -144,15 +172,34 @@ export interface NexusGenFieldTypes {
     accessToken: string; // String!
     refreshToken: string; // String!
   }
+  Indicator: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description: string | null; // String
+    formula: string | null; // String
+    frequency: NexusGenEnums['IndicatorFrequency']; // IndicatorFrequency!
+    id: number; // Int!
+    name: string; // String!
+    ownerId: number | null; // Int
+    targetValue: number | null; // Float
+    unit: string | null; // String
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  IndicatorList: { // field return type
+    nodes: NexusGenRootTypes['Indicator'][] | null; // [Indicator!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Mutation: { // field return type
+    createIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     createStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     createUser: NexusGenRootTypes['User'] | null; // User
+    deleteIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     deleteStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     deleteUser: NexusGenRootTypes['User'] | null; // User
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     logout: boolean; // Boolean!
     refreshToken: NexusGenRootTypes['AuthTokens']; // AuthTokens!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    updateIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     updateStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
@@ -163,6 +210,8 @@ export interface NexusGenFieldTypes {
     totalCount: number; // Int!
   }
   Query: { // field return type
+    indicatorGet: NexusGenRootTypes['Indicator'] | null; // Indicator
+    indicatorLoad: NexusGenRootTypes['IndicatorList'] | null; // IndicatorList
     me: NexusGenRootTypes['User'] | null; // User
     strategicObjectiveGet: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     strategicObjectiveLoad: NexusGenRootTypes['StrategicObjectiveList'] | null; // StrategicObjectiveList
@@ -208,15 +257,34 @@ export interface NexusGenFieldTypeNames {
     accessToken: 'String'
     refreshToken: 'String'
   }
+  Indicator: { // field return type name
+    createdAt: 'DateTime'
+    description: 'String'
+    formula: 'String'
+    frequency: 'IndicatorFrequency'
+    id: 'Int'
+    name: 'String'
+    ownerId: 'Int'
+    targetValue: 'Float'
+    unit: 'String'
+    updatedAt: 'DateTime'
+  }
+  IndicatorList: { // field return type name
+    nodes: 'Indicator'
+    pagination: 'Pagination'
+  }
   Mutation: { // field return type name
+    createIndicator: 'Indicator'
     createStrategicObjective: 'StrategicObjective'
     createUser: 'User'
+    deleteIndicator: 'Indicator'
     deleteStrategicObjective: 'StrategicObjective'
     deleteUser: 'User'
     login: 'AuthResponse'
     logout: 'Boolean'
     refreshToken: 'AuthTokens'
     register: 'AuthResponse'
+    updateIndicator: 'Indicator'
     updateStrategicObjective: 'StrategicObjective'
     updateUser: 'User'
   }
@@ -227,6 +295,8 @@ export interface NexusGenFieldTypeNames {
     totalCount: 'Int'
   }
   Query: { // field return type name
+    indicatorGet: 'Indicator'
+    indicatorLoad: 'IndicatorList'
     me: 'User'
     strategicObjectiveGet: 'StrategicObjective'
     strategicObjectiveLoad: 'StrategicObjectiveList'
@@ -265,6 +335,15 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createIndicator: { // args
+      description?: string | null; // String
+      formula?: string | null; // String
+      frequency?: NexusGenEnums['IndicatorFrequency'] | null; // IndicatorFrequency
+      name: string; // String!
+      ownerId?: number | null; // Int
+      targetValue?: number | null; // Float
+      unit?: string | null; // String
+    }
     createStrategicObjective: { // args
       description?: string | null; // String
       endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -278,6 +357,9 @@ export interface NexusGenArgTypes {
       email: string; // String!
       name: string; // String!
       password: string; // String!
+    }
+    deleteIndicator: { // args
+      id: number; // Int!
     }
     deleteStrategicObjective: { // args
       id: number; // Int!
@@ -297,6 +379,16 @@ export interface NexusGenArgTypes {
       name: string; // String!
       password: string; // String!
     }
+    updateIndicator: { // args
+      description?: string | null; // String
+      formula?: string | null; // String
+      frequency?: NexusGenEnums['IndicatorFrequency'] | null; // IndicatorFrequency
+      id: number; // Int!
+      name?: string | null; // String
+      ownerId?: number | null; // Int
+      targetValue?: number | null; // Float
+      unit?: string | null; // String
+    }
     updateStrategicObjective: { // args
       description?: string | null; // String
       endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -314,6 +406,14 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    indicatorGet: { // args
+      id: number; // Int!
+    }
+    indicatorLoad: { // args
+      filterArgs?: NexusGenInputs['IndicatorArgs'] | null; // IndicatorArgs
+      order?: NexusGenInputs['IndicatorOrderInput'] | null; // IndicatorOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
     strategicObjectiveGet: { // args
       id: number; // Int!
     }
