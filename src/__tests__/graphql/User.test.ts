@@ -295,7 +295,7 @@ describe('User GraphQL Type', () => {
   })
 
   describe('Mutation: updateUser', () => {
-    it('should update existing user', async () => {
+    it('should not update user without authentication', async () => {
       const ctx = getContext()
 
       const createdUser = await ctx.prisma.user.create({
@@ -303,6 +303,78 @@ describe('User GraphQL Type', () => {
       })
 
       const testServer = await createTestServer(ctx.prisma)
+
+      const mutation = `
+        mutation {
+          updateUser(id: ${createdUser.id}, name: "Updated Name") {
+            id
+            name
+            email
+          }
+        }
+      `
+
+      const result = await executeGraphQL(testServer, mutation)
+
+      expect(result.errors).toBeDefined()
+      expect(result.errors?.[0]?.message).toContain('autenticado')
+    })
+
+    it('should not update another user record', async () => {
+      const ctx = getContext()
+
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Original Name', email: 'original@example.com', password: 'password123' },
+      })
+
+      const anotherUser = await ctx.prisma.user.create({
+        data: { name: 'Another User', email: 'another@example.com', password: 'password123' },
+      })
+
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: anotherUser.id,
+            email: anotherUser.email,
+            name: anotherUser.name,
+          },
+        }
+      )
+
+      const mutation = `
+        mutation {
+          updateUser(id: ${createdUser.id}, name: "Updated Name") {
+            id
+            name
+            email
+          }
+        }
+      `
+
+      const result = await executeGraphQL(testServer, mutation)
+
+      expect(result.errors).toBeDefined()
+      expect(result.errors?.[0]?.message).toContain('permissão')
+    })
+
+    it('should update own user record when authenticated', async () => {
+      const ctx = getContext()
+
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Original Name', email: 'original@example.com', password: 'password123' },
+      })
+
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: createdUser.id,
+            email: createdUser.email,
+            name: createdUser.name,
+          },
+        }
+      )
 
       const mutation = `
         mutation {
@@ -325,7 +397,16 @@ describe('User GraphQL Type', () => {
 
     it('should return null for non-existent user update', async () => {
       const ctx = getContext()
-      const testServer = await createTestServer(ctx.prisma)
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: 999,
+            email: 'ghost@example.com',
+            name: 'Ghost User',
+          },
+        }
+      )
 
       const mutation = `
         mutation {
@@ -344,7 +425,7 @@ describe('User GraphQL Type', () => {
   })
 
   describe('Mutation: deleteUser', () => {
-    it('should delete existing user', async () => {
+    it('should not delete user without authentication', async () => {
       const ctx = getContext()
 
       const createdUser = await ctx.prisma.user.create({
@@ -352,6 +433,78 @@ describe('User GraphQL Type', () => {
       })
 
       const testServer = await createTestServer(ctx.prisma)
+
+      const mutation = `
+        mutation {
+          deleteUser(id: ${createdUser.id}) {
+            id
+            name
+            email
+          }
+        }
+      `
+
+      const result = await executeGraphQL(testServer, mutation)
+
+      expect(result.errors).toBeDefined()
+      expect(result.errors?.[0]?.message).toContain('autenticado')
+    })
+
+    it('should not delete another user record', async () => {
+      const ctx = getContext()
+
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Test User', email: 'test@example.com', password: 'password123' },
+      })
+
+      const anotherUser = await ctx.prisma.user.create({
+        data: { name: 'Another User', email: 'another@example.com', password: 'password123' },
+      })
+
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: anotherUser.id,
+            email: anotherUser.email,
+            name: anotherUser.name,
+          },
+        }
+      )
+
+      const mutation = `
+        mutation {
+          deleteUser(id: ${createdUser.id}) {
+            id
+            name
+            email
+          }
+        }
+      `
+
+      const result = await executeGraphQL(testServer, mutation)
+
+      expect(result.errors).toBeDefined()
+      expect(result.errors?.[0]?.message).toContain('permissão')
+    })
+
+    it('should delete own user record when authenticated', async () => {
+      const ctx = getContext()
+
+      const createdUser = await ctx.prisma.user.create({
+        data: { name: 'Test User', email: 'test@example.com', password: 'password123' },
+      })
+
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: createdUser.id,
+            email: createdUser.email,
+            name: createdUser.name,
+          },
+        }
+      )
 
       const mutation = `
         mutation {
@@ -380,7 +533,16 @@ describe('User GraphQL Type', () => {
 
     it('should return null for non-existent user deletion', async () => {
       const ctx = getContext()
-      const testServer = await createTestServer(ctx.prisma)
+      const testServer = await createTestServer(
+        { prisma: ctx.prisma },
+        {
+          currentUser: {
+            id: 999,
+            email: 'ghost@example.com',
+            name: 'Ghost User',
+          },
+        }
+      )
 
       const mutation = `
         mutation {

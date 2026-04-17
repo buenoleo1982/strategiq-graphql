@@ -1,7 +1,16 @@
+import { env } from '@/support/config'
 import { PrismaClient } from '@prisma/client'
 import { afterAll, beforeAll, beforeEach } from 'vitest'
 
-const TEST_DATABASE_URL = 'postgresql://strategiq:strategiq@localhost:5432/strategiq_test'
+const TEST_DATABASE_NAME = 'strategiq_test'
+
+const buildDatabaseUrl = (databaseName: string) => {
+  const url = new URL(env.DATABASE_URL)
+  url.pathname = `/${databaseName}`
+  return url.toString()
+}
+
+const TEST_DATABASE_URL = buildDatabaseUrl(TEST_DATABASE_NAME)
 
 export type TestContext = {
   prisma: PrismaClient
@@ -24,7 +33,7 @@ const cleanupDatabase = async (prisma: PrismaClient) => {
  * Cria o banco de dados de teste se não existir
  */
 const ensureTestDatabase = async () => {
-  const adminUrl = TEST_DATABASE_URL.replace('/strategiq_test', '/postgres')
+  const adminUrl = buildDatabaseUrl('postgres')
   const adminPrisma = new PrismaClient({
     datasources: {
       db: {
@@ -34,7 +43,7 @@ const ensureTestDatabase = async () => {
   })
 
   try {
-    await adminPrisma.$executeRawUnsafe('CREATE DATABASE strategiq_test;')
+    await adminPrisma.$executeRawUnsafe(`CREATE DATABASE ${TEST_DATABASE_NAME};`)
   } catch (error: any) {
     // Database already exists or other error
     if (!error.message.includes('already exists')) {
@@ -50,11 +59,13 @@ export const setupTestDatabase = () => {
     // Ensure test database exists
     await ensureTestDatabase()
 
-    // Set test database URL
-    process.env.DATABASE_URL = TEST_DATABASE_URL
-
     // Create Prisma Client (only once)
     basePrisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: TEST_DATABASE_URL,
+        },
+      },
       log: [], // Disable Prisma logs in tests
     })
 
