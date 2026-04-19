@@ -29,6 +29,25 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CorrectiveActionArgs: { // input type
+    id?: number | null; // Int
+    nonConformityId?: number | null; // Int
+    ownerId?: number | null; // Int
+    status?: NexusGenEnums['CorrectiveActionStatus'] | null; // CorrectiveActionStatus
+  }
+  CorrectiveActionOrderInput: { // input type
+    column: NexusGenEnums['CorrectiveActionOrderBy']; // CorrectiveActionOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
+  EffectivenessCheckArgs: { // input type
+    correctiveActionId?: number | null; // Int
+    id?: number | null; // Int
+    result?: NexusGenEnums['EffectivenessResult'] | null; // EffectivenessResult
+  }
+  EffectivenessCheckOrderInput: { // input type
+    column: NexusGenEnums['EffectivenessCheckOrderBy']; // EffectivenessCheckOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
   IndicatorArgs: { // input type
     frequency?: NexusGenEnums['IndicatorFrequency'] | null; // IndicatorFrequency
     id?: number | null; // Int
@@ -92,6 +111,10 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  CorrectiveActionOrderBy: "CREATED_AT" | "DUE_AT" | "ID" | "NON_CONFORMITY_ID" | "STATUS"
+  CorrectiveActionStatus: "CANCELLED" | "COMPLETED" | "IN_PROGRESS" | "OPEN"
+  EffectivenessCheckOrderBy: "CHECKED_AT" | "CORRECTIVE_ACTION_ID" | "CREATED_AT" | "ID" | "RESULT"
+  EffectivenessResult: "EFFECTIVE" | "INEFFECTIVE" | "NEEDS_MONITORING"
   IndicatorEntryOrderBy: "COLLECTED_AT" | "CREATED_AT" | "ID" | "INDICATOR_ID" | "VALUE"
   IndicatorFrequency: "DAILY" | "MONTHLY" | "QUARTERLY" | "WEEKLY" | "YEARLY"
   IndicatorOrderBy: "CREATED_AT" | "FREQUENCY" | "ID" | "NAME" | "TARGET_VALUE"
@@ -124,6 +147,35 @@ export interface NexusGenObjects {
   AuthTokens: { // root type
     accessToken: string; // String!
     refreshToken: string; // String!
+  }
+  CorrectiveAction: { // root type
+    completedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    nonConformityId: number; // Int!
+    ownerId?: number | null; // Int
+    status: NexusGenEnums['CorrectiveActionStatus']; // CorrectiveActionStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  CorrectiveActionList: { // root type
+    nodes?: NexusGenRootTypes['CorrectiveAction'][] | null; // [CorrectiveAction!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
+  EffectivenessCheck: { // root type
+    checkedAt: NexusGenScalars['DateTime']; // DateTime!
+    correctiveActionId: number; // Int!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    notes?: string | null; // String
+    result: NexusGenEnums['EffectivenessResult']; // EffectivenessResult!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  EffectivenessCheckList: { // root type
+    nodes?: NexusGenRootTypes['EffectivenessCheck'][] | null; // [EffectivenessCheck!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Indicator: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -229,6 +281,35 @@ export interface NexusGenFieldTypes {
     accessToken: string; // String!
     refreshToken: string; // String!
   }
+  CorrectiveAction: { // field return type
+    completedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description: string | null; // String
+    dueAt: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    nonConformityId: number; // Int!
+    ownerId: number | null; // Int
+    status: NexusGenEnums['CorrectiveActionStatus']; // CorrectiveActionStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  CorrectiveActionList: { // field return type
+    nodes: NexusGenRootTypes['CorrectiveAction'][] | null; // [CorrectiveAction!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
+  EffectivenessCheck: { // field return type
+    checkedAt: NexusGenScalars['DateTime']; // DateTime!
+    correctiveActionId: number; // Int!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: number; // Int!
+    notes: string | null; // String
+    result: NexusGenEnums['EffectivenessResult']; // EffectivenessResult!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  EffectivenessCheckList: { // field return type
+    nodes: NexusGenRootTypes['EffectivenessCheck'][] | null; // [EffectivenessCheck!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Indicator: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string | null; // String
@@ -263,11 +344,15 @@ export interface NexusGenFieldTypes {
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Mutation: { // field return type
+    createCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
+    createEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     createIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     createIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     createNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     createStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     createUser: NexusGenRootTypes['User'] | null; // User
+    deleteCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
+    deleteEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     deleteIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     deleteIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     deleteNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
@@ -277,6 +362,8 @@ export interface NexusGenFieldTypes {
     logout: boolean; // Boolean!
     refreshToken: NexusGenRootTypes['AuthTokens']; // AuthTokens!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    updateCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
+    updateEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     updateIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     updateIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     updateNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
@@ -307,6 +394,10 @@ export interface NexusGenFieldTypes {
     totalCount: number; // Int!
   }
   Query: { // field return type
+    correctiveActionGet: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
+    correctiveActionLoad: NexusGenRootTypes['CorrectiveActionList'] | null; // CorrectiveActionList
+    effectivenessCheckGet: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
+    effectivenessCheckLoad: NexusGenRootTypes['EffectivenessCheckList'] | null; // EffectivenessCheckList
     indicatorEntryGet: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     indicatorEntryLoad: NexusGenRootTypes['IndicatorEntryList'] | null; // IndicatorEntryList
     indicatorGet: NexusGenRootTypes['Indicator'] | null; // Indicator
@@ -358,6 +449,35 @@ export interface NexusGenFieldTypeNames {
     accessToken: 'String'
     refreshToken: 'String'
   }
+  CorrectiveAction: { // field return type name
+    completedAt: 'DateTime'
+    createdAt: 'DateTime'
+    description: 'String'
+    dueAt: 'DateTime'
+    id: 'Int'
+    nonConformityId: 'Int'
+    ownerId: 'Int'
+    status: 'CorrectiveActionStatus'
+    title: 'String'
+    updatedAt: 'DateTime'
+  }
+  CorrectiveActionList: { // field return type name
+    nodes: 'CorrectiveAction'
+    pagination: 'Pagination'
+  }
+  EffectivenessCheck: { // field return type name
+    checkedAt: 'DateTime'
+    correctiveActionId: 'Int'
+    createdAt: 'DateTime'
+    id: 'Int'
+    notes: 'String'
+    result: 'EffectivenessResult'
+    updatedAt: 'DateTime'
+  }
+  EffectivenessCheckList: { // field return type name
+    nodes: 'EffectivenessCheck'
+    pagination: 'Pagination'
+  }
   Indicator: { // field return type name
     createdAt: 'DateTime'
     description: 'String'
@@ -392,11 +512,15 @@ export interface NexusGenFieldTypeNames {
     pagination: 'Pagination'
   }
   Mutation: { // field return type name
+    createCorrectiveAction: 'CorrectiveAction'
+    createEffectivenessCheck: 'EffectivenessCheck'
     createIndicator: 'Indicator'
     createIndicatorEntry: 'IndicatorEntry'
     createNonConformity: 'NonConformity'
     createStrategicObjective: 'StrategicObjective'
     createUser: 'User'
+    deleteCorrectiveAction: 'CorrectiveAction'
+    deleteEffectivenessCheck: 'EffectivenessCheck'
     deleteIndicator: 'Indicator'
     deleteIndicatorEntry: 'IndicatorEntry'
     deleteNonConformity: 'NonConformity'
@@ -406,6 +530,8 @@ export interface NexusGenFieldTypeNames {
     logout: 'Boolean'
     refreshToken: 'AuthTokens'
     register: 'AuthResponse'
+    updateCorrectiveAction: 'CorrectiveAction'
+    updateEffectivenessCheck: 'EffectivenessCheck'
     updateIndicator: 'Indicator'
     updateIndicatorEntry: 'IndicatorEntry'
     updateNonConformity: 'NonConformity'
@@ -436,6 +562,10 @@ export interface NexusGenFieldTypeNames {
     totalCount: 'Int'
   }
   Query: { // field return type name
+    correctiveActionGet: 'CorrectiveAction'
+    correctiveActionLoad: 'CorrectiveActionList'
+    effectivenessCheckGet: 'EffectivenessCheck'
+    effectivenessCheckLoad: 'EffectivenessCheckList'
     indicatorEntryGet: 'IndicatorEntry'
     indicatorEntryLoad: 'IndicatorEntryList'
     indicatorGet: 'Indicator'
@@ -480,6 +610,21 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createCorrectiveAction: { // args
+      completedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      nonConformityId: number; // Int!
+      ownerId?: number | null; // Int
+      status?: NexusGenEnums['CorrectiveActionStatus'] | null; // CorrectiveActionStatus
+      title: string; // String!
+    }
+    createEffectivenessCheck: { // args
+      checkedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      correctiveActionId: number; // Int!
+      notes?: string | null; // String
+      result: NexusGenEnums['EffectivenessResult']; // EffectivenessResult!
+    }
     createIndicator: { // args
       description?: string | null; // String
       formula?: string | null; // String
@@ -520,6 +665,12 @@ export interface NexusGenArgTypes {
       name: string; // String!
       password: string; // String!
     }
+    deleteCorrectiveAction: { // args
+      id: number; // Int!
+    }
+    deleteEffectivenessCheck: { // args
+      id: number; // Int!
+    }
     deleteIndicator: { // args
       id: number; // Int!
     }
@@ -546,6 +697,23 @@ export interface NexusGenArgTypes {
       email: string; // String!
       name: string; // String!
       password: string; // String!
+    }
+    updateCorrectiveAction: { // args
+      completedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      id: number; // Int!
+      nonConformityId?: number | null; // Int
+      ownerId?: number | null; // Int
+      status?: NexusGenEnums['CorrectiveActionStatus'] | null; // CorrectiveActionStatus
+      title?: string | null; // String
+    }
+    updateEffectivenessCheck: { // args
+      checkedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      correctiveActionId?: number | null; // Int
+      id: number; // Int!
+      notes?: string | null; // String
+      result?: NexusGenEnums['EffectivenessResult'] | null; // EffectivenessResult
     }
     updateIndicator: { // args
       description?: string | null; // String
@@ -593,6 +761,22 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    correctiveActionGet: { // args
+      id: number; // Int!
+    }
+    correctiveActionLoad: { // args
+      filterArgs?: NexusGenInputs['CorrectiveActionArgs'] | null; // CorrectiveActionArgs
+      order?: NexusGenInputs['CorrectiveActionOrderInput'] | null; // CorrectiveActionOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
+    effectivenessCheckGet: { // args
+      id: number; // Int!
+    }
+    effectivenessCheckLoad: { // args
+      filterArgs?: NexusGenInputs['EffectivenessCheckArgs'] | null; // EffectivenessCheckArgs
+      order?: NexusGenInputs['EffectivenessCheckOrderInput'] | null; // EffectivenessCheckOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
     indicatorEntryGet: { // args
       id: number; // Int!
     }

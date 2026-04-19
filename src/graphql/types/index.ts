@@ -1,4 +1,5 @@
 export * from './auth'
+export * from './capa'
 export * from './indicator-entry'
 export * from './indicator'
 export * from './non-conformity'

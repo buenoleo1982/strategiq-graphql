@@ -12,8 +12,93 @@ type AuthTokens {
   refreshToken: String!
 }
 
+type CorrectiveAction {
+  completedAt: DateTime
+  createdAt: DateTime!
+  description: String
+  dueAt: DateTime
+  id: Int!
+  nonConformityId: Int!
+  ownerId: Int
+  status: CorrectiveActionStatus!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input CorrectiveActionArgs {
+  id: Int
+  nonConformityId: Int
+  ownerId: Int
+  status: CorrectiveActionStatus
+}
+
+type CorrectiveActionList {
+  nodes: [CorrectiveAction!]
+  pagination: Pagination!
+}
+
+enum CorrectiveActionOrderBy {
+  CREATED_AT
+  DUE_AT
+  ID
+  NON_CONFORMITY_ID
+  STATUS
+}
+
+input CorrectiveActionOrderInput {
+  column: CorrectiveActionOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum CorrectiveActionStatus {
+  CANCELLED
+  COMPLETED
+  IN_PROGRESS
+  OPEN
+}
+
 """Date custom scalar type"""
 scalar DateTime
+
+type EffectivenessCheck {
+  checkedAt: DateTime!
+  correctiveActionId: Int!
+  createdAt: DateTime!
+  id: Int!
+  notes: String
+  result: EffectivenessResult!
+  updatedAt: DateTime!
+}
+
+input EffectivenessCheckArgs {
+  correctiveActionId: Int
+  id: Int
+  result: EffectivenessResult
+}
+
+type EffectivenessCheckList {
+  nodes: [EffectivenessCheck!]
+  pagination: Pagination!
+}
+
+enum EffectivenessCheckOrderBy {
+  CHECKED_AT
+  CORRECTIVE_ACTION_ID
+  CREATED_AT
+  ID
+  RESULT
+}
+
+input EffectivenessCheckOrderInput {
+  column: EffectivenessCheckOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum EffectivenessResult {
+  EFFECTIVE
+  INEFFECTIVE
+  NEEDS_MONITORING
+}
 
 type Indicator {
   createdAt: DateTime!
@@ -107,11 +192,15 @@ enum IndicatorTargetStatus {
 }
 
 type Mutation {
+  createCorrectiveAction(completedAt: DateTime, description: String, dueAt: DateTime, nonConformityId: Int!, ownerId: Int, status: CorrectiveActionStatus, title: String!): CorrectiveAction
+  createEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int!, notes: String, result: EffectivenessResult!): EffectivenessCheck
   createIndicator(description: String, formula: String, frequency: IndicatorFrequency, name: String!, ownerId: Int, targetValue: Float, unit: String): Indicator
   createIndicatorEntry(collectedAt: DateTime, indicatorId: Int!, notes: String, source: String, value: Float!): IndicatorEntry
   createNonConformity(department: String, description: String, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String!): NonConformity
   createStrategicObjective(description: String, endsAt: DateTime, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String!): StrategicObjective
   createUser(email: String!, name: String!, password: String!): User
+  deleteCorrectiveAction(id: Int!): CorrectiveAction
+  deleteEffectivenessCheck(id: Int!): EffectivenessCheck
   deleteIndicator(id: Int!): Indicator
   deleteIndicatorEntry(id: Int!): IndicatorEntry
   deleteNonConformity(id: Int!): NonConformity
@@ -121,6 +210,8 @@ type Mutation {
   logout: Boolean!
   refreshToken(refreshToken: String!): AuthTokens!
   register(email: String!, name: String!, password: String!): AuthResponse!
+  updateCorrectiveAction(completedAt: DateTime, description: String, dueAt: DateTime, id: Int!, nonConformityId: Int, ownerId: Int, status: CorrectiveActionStatus, title: String): CorrectiveAction
+  updateEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int, id: Int!, notes: String, result: EffectivenessResult): EffectivenessCheck
   updateIndicator(description: String, formula: String, frequency: IndicatorFrequency, id: Int!, name: String, ownerId: Int, targetValue: Float, unit: String): Indicator
   updateIndicatorEntry(collectedAt: DateTime, id: Int!, indicatorId: Int, notes: String, source: String, value: Float): IndicatorEntry
   updateNonConformity(department: String, description: String, id: Int!, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String): NonConformity
@@ -202,6 +293,10 @@ type Pagination {
 }
 
 type Query {
+  correctiveActionGet(id: Int!): CorrectiveAction
+  correctiveActionLoad(filterArgs: CorrectiveActionArgs, order: CorrectiveActionOrderInput, pageArgs: PageArgs): CorrectiveActionList
+  effectivenessCheckGet(id: Int!): EffectivenessCheck
+  effectivenessCheckLoad(filterArgs: EffectivenessCheckArgs, order: EffectivenessCheckOrderInput, pageArgs: PageArgs): EffectivenessCheckList
   indicatorEntryGet(id: Int!): IndicatorEntry
   indicatorEntryLoad(filterArgs: IndicatorEntryArgs, order: IndicatorEntryOrderInput, pageArgs: PageArgs): IndicatorEntryList
   indicatorGet(id: Int!): Indicator

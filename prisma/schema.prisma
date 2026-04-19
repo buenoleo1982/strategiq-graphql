@@ -53,6 +53,19 @@ enum NonConformityStatus {
   CLOSED
 }
 
+enum CorrectiveActionStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EffectivenessResult {
+  EFFECTIVE
+  INEFFECTIVE
+  NEEDS_MONITORING
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -112,6 +125,33 @@ model NonConformity {
   department  String?
   occurredAt  DateTime?
   ownerId     Int?
+  correctiveActions CorrectiveAction[]
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
+}
+
+model CorrectiveAction {
+  id               Int                    @id @default(autoincrement())
+  nonConformityId  Int
+  nonConformity    NonConformity          @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  status           CorrectiveActionStatus @default(OPEN)
+  dueAt            DateTime?
+  completedAt      DateTime?
+  ownerId          Int?
+  effectivenessChecks EffectivenessCheck[]
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+}
+
+model EffectivenessCheck {
+  id                 Int                 @id @default(autoincrement())
+  correctiveActionId Int
+  correctiveAction   CorrectiveAction    @relation(fields: [correctiveActionId], references: [id], onDelete: Cascade)
+  checkedAt          DateTime            @default(now())
+  result             EffectivenessResult
+  notes              String?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
