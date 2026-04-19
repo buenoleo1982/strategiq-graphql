@@ -1,6 +1,7 @@
 export * from './auth'
 export * from './indicator-entry'
 export * from './indicator'
+export * from './non-conformity'
 export * from './utils'
 export * from './Scalars'
 export * from './strategic-objective'

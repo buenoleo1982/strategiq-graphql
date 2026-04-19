@@ -39,6 +39,20 @@ enum IndicatorFrequency {
   YEARLY
 }
 
+enum NonConformitySeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NonConformityStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -86,4 +100,18 @@ model IndicatorEntry {
   notes       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model NonConformity {
+  id          Int                  @id @default(autoincrement())
+  title       String
+  description String?
+  severity    NonConformitySeverity @default(MEDIUM)
+  status      NonConformityStatus   @default(OPEN)
+  source      String?
+  department  String?
+  occurredAt  DateTime?
+  ownerId     Int?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 }

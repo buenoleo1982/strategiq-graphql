@@ -109,10 +109,12 @@ enum IndicatorTargetStatus {
 type Mutation {
   createIndicator(description: String, formula: String, frequency: IndicatorFrequency, name: String!, ownerId: Int, targetValue: Float, unit: String): Indicator
   createIndicatorEntry(collectedAt: DateTime, indicatorId: Int!, notes: String, source: String, value: Float!): IndicatorEntry
+  createNonConformity(department: String, description: String, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String!): NonConformity
   createStrategicObjective(description: String, endsAt: DateTime, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String!): StrategicObjective
   createUser(email: String!, name: String!, password: String!): User
   deleteIndicator(id: Int!): Indicator
   deleteIndicatorEntry(id: Int!): IndicatorEntry
+  deleteNonConformity(id: Int!): NonConformity
   deleteStrategicObjective(id: Int!): StrategicObjective
   deleteUser(id: Int!): User
   login(email: String!, password: String!): AuthResponse!
@@ -121,8 +123,65 @@ type Mutation {
   register(email: String!, name: String!, password: String!): AuthResponse!
   updateIndicator(description: String, formula: String, frequency: IndicatorFrequency, id: Int!, name: String, ownerId: Int, targetValue: Float, unit: String): Indicator
   updateIndicatorEntry(collectedAt: DateTime, id: Int!, indicatorId: Int, notes: String, source: String, value: Float): IndicatorEntry
+  updateNonConformity(department: String, description: String, id: Int!, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String): NonConformity
   updateStrategicObjective(description: String, endsAt: DateTime, id: Int!, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String): StrategicObjective
   updateUser(email: String, id: Int!, name: String): User
+}
+
+type NonConformity {
+  createdAt: DateTime!
+  department: String
+  description: String
+  id: Int!
+  occurredAt: DateTime
+  ownerId: Int
+  severity: NonConformitySeverity!
+  source: String
+  status: NonConformityStatus!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input NonConformityArgs {
+  department: String
+  id: Int
+  ownerId: Int
+  severity: NonConformitySeverity
+  status: NonConformityStatus
+  title: String
+}
+
+type NonConformityList {
+  nodes: [NonConformity!]
+  pagination: Pagination!
+}
+
+enum NonConformityOrderBy {
+  CREATED_AT
+  ID
+  OCCURRED_AT
+  SEVERITY
+  STATUS
+  TITLE
+}
+
+input NonConformityOrderInput {
+  column: NonConformityOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum NonConformitySeverity {
+  CRITICAL
+  HIGH
+  LOW
+  MEDIUM
+}
+
+enum NonConformityStatus {
+  CLOSED
+  IN_PROGRESS
+  OPEN
+  RESOLVED
 }
 
 enum OrderDirection {
@@ -148,6 +207,8 @@ type Query {
   indicatorGet(id: Int!): Indicator
   indicatorLoad(filterArgs: IndicatorArgs, order: IndicatorOrderInput, pageArgs: PageArgs): IndicatorList
   me: User
+  nonConformityGet(id: Int!): NonConformity
+  nonConformityLoad(filterArgs: NonConformityArgs, order: NonConformityOrderInput, pageArgs: PageArgs): NonConformityList
   strategicObjectiveGet(id: Int!): StrategicObjective
   strategicObjectiveLoad(filterArgs: StrategicObjectiveArgs, order: StrategicObjectiveOrderInput, pageArgs: PageArgs): StrategicObjectiveList
   userGet(id: Int!): User

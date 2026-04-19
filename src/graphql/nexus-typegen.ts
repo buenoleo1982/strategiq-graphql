@@ -48,6 +48,18 @@ export interface NexusGenInputs {
     column: NexusGenEnums['IndicatorOrderBy']; // IndicatorOrderBy!
     direction: NexusGenEnums['OrderDirection']; // OrderDirection!
   }
+  NonConformityArgs: { // input type
+    department?: string | null; // String
+    id?: number | null; // Int
+    ownerId?: number | null; // Int
+    severity?: NexusGenEnums['NonConformitySeverity'] | null; // NonConformitySeverity
+    status?: NexusGenEnums['NonConformityStatus'] | null; // NonConformityStatus
+    title?: string | null; // String
+  }
+  NonConformityOrderInput: { // input type
+    column: NexusGenEnums['NonConformityOrderBy']; // NonConformityOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
   PageArgs: { // input type
     skip: number; // Int!
     take: number; // Int!
@@ -84,6 +96,9 @@ export interface NexusGenEnums {
   IndicatorFrequency: "DAILY" | "MONTHLY" | "QUARTERLY" | "WEEKLY" | "YEARLY"
   IndicatorOrderBy: "CREATED_AT" | "FREQUENCY" | "ID" | "NAME" | "TARGET_VALUE"
   IndicatorTargetStatus: "BELOW_TARGET" | "NO_DATA" | "NO_TARGET" | "ON_TARGET"
+  NonConformityOrderBy: "CREATED_AT" | "ID" | "OCCURRED_AT" | "SEVERITY" | "STATUS" | "TITLE"
+  NonConformitySeverity: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
+  NonConformityStatus: "CLOSED" | "IN_PROGRESS" | "OPEN" | "RESOLVED"
   OrderDirection: "ASC" | "DESC"
   StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
   StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
@@ -141,6 +156,23 @@ export interface NexusGenObjects {
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Mutation: {};
+  NonConformity: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    department?: string | null; // String
+    description?: string | null; // String
+    id: number; // Int!
+    occurredAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    ownerId?: number | null; // Int
+    severity: NexusGenEnums['NonConformitySeverity']; // NonConformitySeverity!
+    source?: string | null; // String
+    status: NexusGenEnums['NonConformityStatus']; // NonConformityStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  NonConformityList: { // root type
+    nodes?: NexusGenRootTypes['NonConformity'][] | null; // [NonConformity!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Pagination: { // root type
     hasMore: boolean; // Boolean!
     page: number; // Int!
@@ -233,10 +265,12 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     createIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
+    createNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     createStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     createUser: NexusGenRootTypes['User'] | null; // User
     deleteIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     deleteIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
+    deleteNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     deleteStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     deleteUser: NexusGenRootTypes['User'] | null; // User
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
@@ -245,8 +279,26 @@ export interface NexusGenFieldTypes {
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     updateIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     updateIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
+    updateNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     updateStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     updateUser: NexusGenRootTypes['User'] | null; // User
+  }
+  NonConformity: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    department: string | null; // String
+    description: string | null; // String
+    id: number; // Int!
+    occurredAt: NexusGenScalars['DateTime'] | null; // DateTime
+    ownerId: number | null; // Int
+    severity: NexusGenEnums['NonConformitySeverity']; // NonConformitySeverity!
+    source: string | null; // String
+    status: NexusGenEnums['NonConformityStatus']; // NonConformityStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  NonConformityList: { // field return type
+    nodes: NexusGenRootTypes['NonConformity'][] | null; // [NonConformity!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Pagination: { // field return type
     hasMore: boolean; // Boolean!
@@ -260,6 +312,8 @@ export interface NexusGenFieldTypes {
     indicatorGet: NexusGenRootTypes['Indicator'] | null; // Indicator
     indicatorLoad: NexusGenRootTypes['IndicatorList'] | null; // IndicatorList
     me: NexusGenRootTypes['User'] | null; // User
+    nonConformityGet: NexusGenRootTypes['NonConformity'] | null; // NonConformity
+    nonConformityLoad: NexusGenRootTypes['NonConformityList'] | null; // NonConformityList
     strategicObjectiveGet: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     strategicObjectiveLoad: NexusGenRootTypes['StrategicObjectiveList'] | null; // StrategicObjectiveList
     userGet: NexusGenRootTypes['User'] | null; // User
@@ -340,10 +394,12 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     createIndicator: 'Indicator'
     createIndicatorEntry: 'IndicatorEntry'
+    createNonConformity: 'NonConformity'
     createStrategicObjective: 'StrategicObjective'
     createUser: 'User'
     deleteIndicator: 'Indicator'
     deleteIndicatorEntry: 'IndicatorEntry'
+    deleteNonConformity: 'NonConformity'
     deleteStrategicObjective: 'StrategicObjective'
     deleteUser: 'User'
     login: 'AuthResponse'
@@ -352,8 +408,26 @@ export interface NexusGenFieldTypeNames {
     register: 'AuthResponse'
     updateIndicator: 'Indicator'
     updateIndicatorEntry: 'IndicatorEntry'
+    updateNonConformity: 'NonConformity'
     updateStrategicObjective: 'StrategicObjective'
     updateUser: 'User'
+  }
+  NonConformity: { // field return type name
+    createdAt: 'DateTime'
+    department: 'String'
+    description: 'String'
+    id: 'Int'
+    occurredAt: 'DateTime'
+    ownerId: 'Int'
+    severity: 'NonConformitySeverity'
+    source: 'String'
+    status: 'NonConformityStatus'
+    title: 'String'
+    updatedAt: 'DateTime'
+  }
+  NonConformityList: { // field return type name
+    nodes: 'NonConformity'
+    pagination: 'Pagination'
   }
   Pagination: { // field return type name
     hasMore: 'Boolean'
@@ -367,6 +441,8 @@ export interface NexusGenFieldTypeNames {
     indicatorGet: 'Indicator'
     indicatorLoad: 'IndicatorList'
     me: 'User'
+    nonConformityGet: 'NonConformity'
+    nonConformityLoad: 'NonConformityList'
     strategicObjectiveGet: 'StrategicObjective'
     strategicObjectiveLoad: 'StrategicObjectiveList'
     userGet: 'User'
@@ -420,6 +496,16 @@ export interface NexusGenArgTypes {
       source?: string | null; // String
       value: number; // Float!
     }
+    createNonConformity: { // args
+      department?: string | null; // String
+      description?: string | null; // String
+      occurredAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      ownerId?: number | null; // Int
+      severity?: NexusGenEnums['NonConformitySeverity'] | null; // NonConformitySeverity
+      source?: string | null; // String
+      status?: NexusGenEnums['NonConformityStatus'] | null; // NonConformityStatus
+      title: string; // String!
+    }
     createStrategicObjective: { // args
       description?: string | null; // String
       endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -438,6 +524,9 @@ export interface NexusGenArgTypes {
       id: number; // Int!
     }
     deleteIndicatorEntry: { // args
+      id: number; // Int!
+    }
+    deleteNonConformity: { // args
       id: number; // Int!
     }
     deleteStrategicObjective: { // args
@@ -476,6 +565,17 @@ export interface NexusGenArgTypes {
       source?: string | null; // String
       value?: number | null; // Float
     }
+    updateNonConformity: { // args
+      department?: string | null; // String
+      description?: string | null; // String
+      id: number; // Int!
+      occurredAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      ownerId?: number | null; // Int
+      severity?: NexusGenEnums['NonConformitySeverity'] | null; // NonConformitySeverity
+      source?: string | null; // String
+      status?: NexusGenEnums['NonConformityStatus'] | null; // NonConformityStatus
+      title?: string | null; // String
+    }
     updateStrategicObjective: { // args
       description?: string | null; // String
       endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -507,6 +607,14 @@ export interface NexusGenArgTypes {
     indicatorLoad: { // args
       filterArgs?: NexusGenInputs['IndicatorArgs'] | null; // IndicatorArgs
       order?: NexusGenInputs['IndicatorOrderInput'] | null; // IndicatorOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
+    nonConformityGet: { // args
+      id: number; // Int!
+    }
+    nonConformityLoad: { // args
+      filterArgs?: NexusGenInputs['NonConformityArgs'] | null; // NonConformityArgs
+      order?: NexusGenInputs['NonConformityOrderInput'] | null; // NonConformityOrderInput
       pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
     }
     strategicObjectiveGet: { // args
