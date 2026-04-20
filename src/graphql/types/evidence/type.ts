@@ -59,5 +59,6 @@ export const EvidenceArgs = inputObjectType({
     t.int('indicatorId')
     t.int('nonConformityId')
     t.int('correctiveActionId')
+    t.boolean('includeDeleted')
   },
 })

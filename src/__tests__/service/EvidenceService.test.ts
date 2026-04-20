@@ -36,4 +36,10 @@ describe('Evidence service helpers', () => {
       nonConformityId: 4,
     })
   })
+
+  it('should include deleted evidences when requested', () => {
+    expect(buildEvidenceWhere({ nonConformityId: 4, includeDeleted: true })).toEqual({
+      nonConformityId: 4,
+    })
+  })
 })

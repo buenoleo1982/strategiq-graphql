@@ -97,6 +97,39 @@ describe('Evidence resolvers', () => {
     expect(result.nodes).toHaveLength(1)
   })
 
+  it('should request deleted evidences when includeDeleted is true', async () => {
+    const ctx = createContext({
+      id: 1,
+      email: 'quality@example.com',
+      name: 'Quality',
+      role: 'QUALITY_MANAGER',
+    })
+
+    ctx.services.pagination.getPagination.mockResolvedValue({
+      page: 1,
+      pageSize: 10,
+      totalCount: 1,
+      hasMore: false,
+    })
+    ctx.prisma.evidence.findMany.mockResolvedValue([])
+
+    await evidenceLoad(
+      {},
+      {
+        filterArgs: { nonConformityId: 1, includeDeleted: true },
+        pageArgs: { skip: 0, take: 10 },
+      },
+      ctx,
+      {} as never
+    )
+
+    expect(ctx.prisma.evidence.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { nonConformityId: 1 },
+      })
+    )
+  })
+
   it('should delete evidence and remove object from storage', async () => {
     const ctx = createContext({
       id: 1,

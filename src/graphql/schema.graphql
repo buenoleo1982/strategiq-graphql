@@ -126,6 +126,7 @@ type Evidence {
 input EvidenceArgs {
   correctiveActionId: Int
   id: Int
+  includeDeleted: Boolean
   indicatorId: Int
   initiativeId: Int
   nonConformityId: Int

@@ -51,6 +51,7 @@ export interface NexusGenInputs {
   EvidenceArgs: { // input type
     correctiveActionId?: number | null; // Int
     id?: number | null; // Int
+    includeDeleted?: boolean | null; // Boolean
     indicatorId?: number | null; // Int
     initiativeId?: number | null; // Int
     nonConformityId?: number | null; // Int

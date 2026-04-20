@@ -77,9 +77,10 @@ export function buildEvidenceWhere(filterArgs?: {
   indicatorId?: number | null
   nonConformityId?: number | null
   correctiveActionId?: number | null
+  includeDeleted?: boolean | null
 }) {
   const where: Prisma.EvidenceWhereInput = {
-    deletedAt: null,
+    ...(filterArgs?.includeDeleted ? {} : { deletedAt: null }),
     ...(filterArgs?.id ? { id: filterArgs.id } : {}),
     ...(filterArgs?.strategicObjectiveId
       ? { strategicObjectiveId: filterArgs.strategicObjectiveId }
