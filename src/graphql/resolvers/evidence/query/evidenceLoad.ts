@@ -1,6 +1,6 @@
 import type { FieldResolver } from 'nexus'
 import { requireAuth } from '@/lib/auth/guards'
-import { buildEvidenceWhere } from '@/service/evidences'
+import { buildEvidenceWhere, evidenceAuditInclude } from '@/service/evidences'
 
 export const evidenceLoad: FieldResolver<'Query', 'evidenceLoad'> = async (_, args, ctx) => {
   requireAuth(ctx)
@@ -12,6 +12,7 @@ export const evidenceLoad: FieldResolver<'Query', 'evidenceLoad'> = async (_, ar
 
   const nodes = await ctx.prisma.evidence.findMany({
     where,
+    include: evidenceAuditInclude,
     skip: (pagination.page - 1) * pagination.pageSize,
     take: pagination.pageSize,
     orderBy: {

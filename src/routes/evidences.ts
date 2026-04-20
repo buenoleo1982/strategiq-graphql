@@ -9,6 +9,7 @@ import {
   assertEvidenceTargetExists,
   buildEvidenceObjectKey,
   buildEvidenceTargetData,
+  evidenceAuditInclude,
   isEvidenceEntityType,
   type EvidenceEntityType,
 } from '@/service/evidences'
@@ -98,6 +99,7 @@ export async function uploadEvidenceHandler(request: FastifyRequest, reply: Fast
       uploadedById: currentUser.id,
       ...buildEvidenceTargetData(entityType, entityId),
     },
+    include: evidenceAuditInclude,
   })
 
   return reply.status(201).send({
@@ -118,7 +120,7 @@ export async function downloadEvidenceHandler(request: FastifyRequest<{ Params: 
     where: { id: evidenceId },
   })
 
-  if (!evidence) {
+  if (!evidence || evidence.deletedAt) {
     return reply.status(404).send({ message: 'Evidência não encontrada' })
   }
 

@@ -1,6 +1,7 @@
 import { GraphQLError } from 'graphql'
 import { describe, expect, it, vi } from 'vitest'
 import { deleteEvidence } from '@/graphql/resolvers/evidence/mutation/deleteEvidence'
+import { updateEvidence } from '@/graphql/resolvers/evidence/mutation/updateEvidence'
 import { evidenceLoad } from '@/graphql/resolvers/evidence/query/evidenceLoad'
 import { MinioStorageService } from '@/lib/storage/minio'
 
@@ -17,8 +18,10 @@ const createContext = (
     currentUser: currentUser ?? null,
     prisma: {
       evidence: {
+        findFirst: vi.fn(),
         findUnique: vi.fn(),
         findMany: vi.fn(),
+        update: vi.fn(),
         delete: vi.fn(),
         count: vi.fn(),
       },
@@ -63,6 +66,12 @@ describe('Evidence resolvers', () => {
         contentType: 'text/plain',
         sizeBytes: 120,
         uploadedById: 1,
+        uploadedBy: { id: 1, name: 'Quality' },
+        updatedById: null,
+        updatedBy: null,
+        deletedById: null,
+        deletedBy: null,
+        deletedAt: null,
         nonConformityId: 1,
         correctiveActionId: null,
         createdAt: new Date(),
@@ -96,12 +105,12 @@ describe('Evidence resolvers', () => {
       role: 'QUALITY_MANAGER',
     })
 
-    ctx.prisma.evidence.findUnique.mockResolvedValue({
+    ctx.prisma.evidence.findFirst.mockResolvedValue({
       id: 3,
       fileName: 'checklist.txt',
       objectKey: 'correctiveAction/2/checklist.txt',
     })
-    ctx.prisma.evidence.delete.mockResolvedValue({
+    ctx.prisma.evidence.update.mockResolvedValue({
       id: 3,
       fileName: 'checklist.txt',
       label: 'Checklist',
@@ -110,6 +119,12 @@ describe('Evidence resolvers', () => {
       contentType: 'text/plain',
       sizeBytes: 80,
       uploadedById: 1,
+      uploadedBy: { id: 1, name: 'Quality' },
+      updatedById: null,
+      updatedBy: null,
+      deletedById: 1,
+      deletedBy: { id: 1, name: 'Quality' },
+      deletedAt: new Date(),
       nonConformityId: null,
       correctiveActionId: 2,
       createdAt: new Date(),
@@ -124,5 +139,52 @@ describe('Evidence resolvers', () => {
     }
 
     expect(result.id).toBe(3)
+  })
+
+  it('should update evidence label and track editor', async () => {
+    const ctx = createContext({
+      id: 1,
+      email: 'quality@example.com',
+      name: 'Quality',
+      role: 'QUALITY_MANAGER',
+    })
+
+    ctx.prisma.evidence.findFirst.mockResolvedValue({
+      id: 8,
+      label: 'Rótulo anterior',
+      deletedAt: null,
+    })
+    ctx.prisma.evidence.update.mockResolvedValue({
+      id: 8,
+      fileName: 'foto.jpg',
+      label: 'Novo rótulo',
+      objectKey: 'nonConformity/1/foto.jpg',
+      bucketName: 'evidences',
+      contentType: 'image/jpeg',
+      sizeBytes: 1200,
+      uploadedById: 1,
+      uploadedBy: { id: 1, name: 'Quality' },
+      updatedById: 1,
+      updatedBy: { id: 1, name: 'Quality' },
+      deletedById: null,
+      deletedBy: null,
+      deletedAt: null,
+      nonConformityId: 1,
+      correctiveActionId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+
+    const result = await updateEvidence({}, { id: 8, label: 'Novo rótulo' }, ctx, {} as never)
+
+    expect(ctx.prisma.evidence.update).toHaveBeenCalledWith({
+      where: { id: 8 },
+      data: {
+        label: 'Novo rótulo',
+        updatedById: 1,
+      },
+      include: expect.any(Object),
+    })
+    expect(result?.label).toBe('Novo rótulo')
   })
 })

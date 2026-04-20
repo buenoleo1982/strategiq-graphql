@@ -32,6 +32,7 @@ describe('Evidence service helpers', () => {
 
   it('should build prisma where clause from filters', () => {
     expect(buildEvidenceWhere({ nonConformityId: 4 })).toEqual({
+      deletedAt: null,
       nonConformityId: 4,
     })
   })

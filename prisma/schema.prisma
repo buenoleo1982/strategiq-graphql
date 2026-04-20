@@ -79,7 +79,9 @@ model User {
   email             String     @unique
   password          String
   role              UserRole   @default(ANALYST)
-  uploadedEvidences Evidence[]
+  uploadedEvidences Evidence[] @relation("EvidenceUploadedBy")
+  updatedEvidences  Evidence[] @relation("EvidenceUpdatedBy")
+  deletedEvidences  Evidence[] @relation("EvidenceDeletedBy")
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 }
@@ -184,25 +186,30 @@ model EffectivenessCheck {
 }
 
 model Evidence {
-  id                  Int                @id @default(autoincrement())
+  id                  Int                 @id @default(autoincrement())
   fileName            String
   label               String?
-  objectKey           String             @unique
+  objectKey           String              @unique
   bucketName          String
   contentType         String
   sizeBytes           Int
   uploadedById        Int?
-  uploadedBy          User?              @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  uploadedBy          User?               @relation("EvidenceUploadedBy", fields: [uploadedById], references: [id], onDelete: SetNull)
+  updatedById         Int?
+  updatedBy           User?               @relation("EvidenceUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedById         Int?
+  deletedBy           User?               @relation("EvidenceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
   strategicObjectiveId Int?
-  strategicObjective  StrategicObjective? @relation(fields: [strategicObjectiveId], references: [id], onDelete: Cascade)
+  strategicObjective  StrategicObjective?  @relation(fields: [strategicObjectiveId], references: [id], onDelete: Cascade)
   initiativeId        Int?
-  initiative          Initiative?        @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  initiative          Initiative?         @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
   indicatorId         Int?
-  indicator           Indicator?         @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  indicator           Indicator?          @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
   nonConformityId     Int?
-  nonConformity       NonConformity?     @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
+  nonConformity       NonConformity?      @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
   correctiveActionId  Int?
-  correctiveAction    CorrectiveAction?  @relation(fields: [correctiveActionId], references: [id], onDelete: Cascade)
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
+  correctiveAction    CorrectiveAction?   @relation(fields: [correctiveActionId], references: [id], onDelete: Cascade)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  deletedAt           DateTime?
 }

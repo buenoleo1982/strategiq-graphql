@@ -104,6 +104,9 @@ type Evidence {
   contentType: String!
   correctiveActionId: Int
   createdAt: DateTime!
+  deletedAt: DateTime
+  deletedById: Int
+  deletedByName: String
   downloadUrl: String!
   fileName: String!
   id: Int!
@@ -114,7 +117,10 @@ type Evidence {
   sizeBytes: Int!
   strategicObjectiveId: Int
   updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
   uploadedById: Int
+  uploadedByName: String
 }
 
 input EvidenceArgs {
@@ -292,6 +298,7 @@ type Mutation {
   register(email: String!, name: String!, password: String!): AuthResponse!
   updateCorrectiveAction(completedAt: DateTime, description: String, dueAt: DateTime, id: Int!, nonConformityId: Int, ownerId: Int, status: CorrectiveActionStatus, title: String): CorrectiveAction
   updateEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int, id: Int!, notes: String, result: EffectivenessResult): EffectivenessCheck
+  updateEvidence(id: Int!, label: String): Evidence
   updateIndicator(description: String, formula: String, frequency: IndicatorFrequency, id: Int!, name: String, ownerId: Int, targetValue: Float, unit: String): Indicator
   updateIndicatorEntry(collectedAt: DateTime, id: Int!, indicatorId: Int, notes: String, source: String, value: Float): IndicatorEntry
   updateInitiative(description: String, dueAt: DateTime, id: Int!, ownerId: Int, status: InitiativeStatus, strategicObjectiveId: Int, title: String): Initiative

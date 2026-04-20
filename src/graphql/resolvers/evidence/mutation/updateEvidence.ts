@@ -1,9 +1,8 @@
 import type { FieldResolver } from 'nexus'
 import { requireAuth } from '@/lib/auth/guards'
-import { MinioStorageService } from '@/lib/storage/minio'
 import { evidenceAuditInclude } from '@/service/evidences'
 
-export const deleteEvidence: FieldResolver<'Mutation', 'deleteEvidence'> = async (_, args, ctx) => {
+export const updateEvidence: FieldResolver<'Mutation', 'updateEvidence'> = async (_, args, ctx) => {
   requireAuth(ctx)
 
   const evidence = await ctx.prisma.evidence.findFirst({
@@ -17,13 +16,11 @@ export const deleteEvidence: FieldResolver<'Mutation', 'deleteEvidence'> = async
     return null
   }
 
-  await MinioStorageService.removeObject(evidence.objectKey)
-
   return ctx.prisma.evidence.update({
     where: { id: args.id },
     data: {
-      deletedAt: new Date(),
-      deletedById: ctx.currentUser!.id,
+      label: args.label?.trim() || null,
+      updatedById: ctx.currentUser!.id,
     },
     include: evidenceAuditInclude,
   })

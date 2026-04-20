@@ -202,6 +202,8 @@ export interface NexusGenObjects {
     contentType: string; // String!
     correctiveActionId?: number | null; // Int
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    deletedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    deletedById?: number | null; // Int
     fileName: string; // String!
     id: number; // Int!
     indicatorId?: number | null; // Int
@@ -211,6 +213,7 @@ export interface NexusGenObjects {
     sizeBytes: number; // Int!
     strategicObjectiveId?: number | null; // Int
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById?: number | null; // Int
     uploadedById?: number | null; // Int
   }
   EvidenceList: { // root type
@@ -369,6 +372,9 @@ export interface NexusGenFieldTypes {
     contentType: string; // String!
     correctiveActionId: number | null; // Int
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    deletedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    deletedById: number | null; // Int
+    deletedByName: string | null; // String
     downloadUrl: string; // String!
     fileName: string; // String!
     id: number; // Int!
@@ -379,7 +385,10 @@ export interface NexusGenFieldTypes {
     sizeBytes: number; // Int!
     strategicObjectiveId: number | null; // Int
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
     uploadedById: number | null; // Int
+    uploadedByName: string | null; // String
   }
   EvidenceList: { // field return type
     nodes: NexusGenRootTypes['Evidence'][] | null; // [Evidence!]
@@ -457,6 +466,7 @@ export interface NexusGenFieldTypes {
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     updateCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
     updateEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
+    updateEvidence: NexusGenRootTypes['Evidence'] | null; // Evidence
     updateIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     updateIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     updateInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
@@ -579,6 +589,9 @@ export interface NexusGenFieldTypeNames {
     contentType: 'String'
     correctiveActionId: 'Int'
     createdAt: 'DateTime'
+    deletedAt: 'DateTime'
+    deletedById: 'Int'
+    deletedByName: 'String'
     downloadUrl: 'String'
     fileName: 'String'
     id: 'Int'
@@ -589,7 +602,10 @@ export interface NexusGenFieldTypeNames {
     sizeBytes: 'Int'
     strategicObjectiveId: 'Int'
     updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
     uploadedById: 'Int'
+    uploadedByName: 'String'
   }
   EvidenceList: { // field return type name
     nodes: 'Evidence'
@@ -667,6 +683,7 @@ export interface NexusGenFieldTypeNames {
     register: 'AuthResponse'
     updateCorrectiveAction: 'CorrectiveAction'
     updateEffectivenessCheck: 'EffectivenessCheck'
+    updateEvidence: 'Evidence'
     updateIndicator: 'Indicator'
     updateIndicatorEntry: 'IndicatorEntry'
     updateInitiative: 'Initiative'
@@ -867,6 +884,10 @@ export interface NexusGenArgTypes {
       id: number; // Int!
       notes?: string | null; // String
       result?: NexusGenEnums['EffectivenessResult'] | null; // EffectivenessResult
+    }
+    updateEvidence: { // args
+      id: number; // Int!
+      label?: string | null; // String
     }
     updateIndicator: { // args
       description?: string | null; // String

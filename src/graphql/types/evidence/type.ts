@@ -2,6 +2,12 @@ import { inputObjectType, objectType } from 'nexus'
 import { Pagination } from '../utils'
 import { buildEvidenceDownloadUrl } from '@/service/evidences'
 
+type EvidenceWithAuditNames = {
+  uploadedBy?: { name: string | null } | null
+  updatedBy?: { name: string | null } | null
+  deletedBy?: { name: string | null } | null
+}
+
 export const Evidence = objectType({
   name: 'Evidence',
   definition(t) {
@@ -11,6 +17,17 @@ export const Evidence = objectType({
     t.nonNull.string('contentType')
     t.nonNull.int('sizeBytes')
     t.int('uploadedById')
+    t.string('uploadedByName', {
+      resolve: evidence => (evidence as EvidenceWithAuditNames).uploadedBy?.name ?? null,
+    })
+    t.int('updatedById')
+    t.string('updatedByName', {
+      resolve: evidence => (evidence as EvidenceWithAuditNames).updatedBy?.name ?? null,
+    })
+    t.int('deletedById')
+    t.string('deletedByName', {
+      resolve: evidence => (evidence as EvidenceWithAuditNames).deletedBy?.name ?? null,
+    })
     t.int('strategicObjectiveId')
     t.int('initiativeId')
     t.int('indicatorId')
@@ -21,6 +38,7 @@ export const Evidence = objectType({
     })
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.field('deletedAt', { type: 'DateTime' })
   },
 })
 

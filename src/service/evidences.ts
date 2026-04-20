@@ -49,6 +49,27 @@ export async function assertEvidenceTargetExists(
   }
 }
 
+export const evidenceAuditInclude = {
+  uploadedBy: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+  updatedBy: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+  deletedBy: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+} satisfies Prisma.EvidenceInclude
+
 export function buildEvidenceWhere(filterArgs?: {
   id?: number | null
   strategicObjectiveId?: number | null
@@ -58,6 +79,7 @@ export function buildEvidenceWhere(filterArgs?: {
   correctiveActionId?: number | null
 }) {
   const where: Prisma.EvidenceWhereInput = {
+    deletedAt: null,
     ...(filterArgs?.id ? { id: filterArgs.id } : {}),
     ...(filterArgs?.strategicObjectiveId
       ? { strategicObjectiveId: filterArgs.strategicObjectiveId }
