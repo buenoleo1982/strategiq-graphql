@@ -1,5 +1,5 @@
-import { Client } from 'minio'
 import { env } from '@/support/config'
+import { Client } from 'minio'
 
 const evidenceBucket = env.MINIO_BUCKET_NAME
 
@@ -12,15 +12,32 @@ const client = new Client({
 })
 
 export class MinioStorageService {
+  private static bucketReady = false
+
   static get bucketName() {
     return evidenceBucket
   }
 
   static async ensureEvidenceBucket() {
+    if (this.bucketReady) {
+      return
+    }
+
     const exists = await client.bucketExists(evidenceBucket)
 
     if (!exists) {
       await client.makeBucket(evidenceBucket)
+    }
+
+    this.bucketReady = true
+  }
+
+  static async warmupEvidenceBucket() {
+    try {
+      await this.ensureEvidenceBucket()
+      return true
+    } catch {
+      return false
     }
   }
 
@@ -29,6 +46,8 @@ export class MinioStorageService {
     buffer: Buffer
     contentType: string
   }) {
+    await this.ensureEvidenceBucket()
+
     await client.putObject(evidenceBucket, input.objectKey, input.buffer, input.buffer.length, {
       'Content-Type': input.contentType,
     })

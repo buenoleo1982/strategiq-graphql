@@ -1,9 +1,22 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   buildEvidenceTargetData,
   buildEvidenceWhere,
   isEvidenceEntityType,
 } from '@/service/evidences'
+import { MinioStorageService } from '@/lib/storage/minio'
+
+describe('MinioStorageService', () => {
+  it('should tolerate unavailable storage during warmup', async () => {
+    const ensureSpy = vi
+      .spyOn(MinioStorageService, 'ensureEvidenceBucket')
+      .mockRejectedValueOnce(new Error('ECONNREFUSED'))
+
+    await expect(MinioStorageService.warmupEvidenceBucket()).resolves.toBe(false)
+
+    ensureSpy.mockRestore()
+  })
+})
 
 describe('Evidence service helpers', () => {
   it('should validate evidence entity types', () => {

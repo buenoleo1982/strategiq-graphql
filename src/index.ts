@@ -28,7 +28,17 @@ const server = new ApolloServer({
 
 await server.start()
 
-await MinioStorageService.ensureEvidenceBucket()
+const evidenceBucketReady = await MinioStorageService.warmupEvidenceBucket()
+
+if (!evidenceBucketReady) {
+  logger.warn(
+    {
+      endpoint: `${env.MINIO_ENDPOINT}:${env.MINIO_PORT}`,
+      bucket: MinioStorageService.bucketName,
+    },
+    'MinIO indisponível no startup; o bucket de evidências será inicializado no primeiro upload'
+  )
+}
 
 // Registrar rota GraphQL usando fastifyApolloHandler
 app.route({
