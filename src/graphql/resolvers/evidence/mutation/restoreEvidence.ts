@@ -2,13 +2,13 @@ import type { FieldResolver } from 'nexus'
 import { requireAuth } from '@/lib/auth/guards'
 import { evidenceAuditInclude } from '@/service/evidences'
 
-export const deleteEvidence: FieldResolver<'Mutation', 'deleteEvidence'> = async (_, args, ctx) => {
+export const restoreEvidence: FieldResolver<'Mutation', 'restoreEvidence'> = async (_, args, ctx) => {
   requireAuth(ctx)
 
   const evidence = await ctx.prisma.evidence.findFirst({
     where: {
       id: args.id,
-      deletedAt: null,
+      deletedAt: { not: null },
     },
   })
 
@@ -19,8 +19,9 @@ export const deleteEvidence: FieldResolver<'Mutation', 'deleteEvidence'> = async
   return ctx.prisma.evidence.update({
     where: { id: args.id },
     data: {
-      deletedAt: new Date(),
-      deletedById: ctx.currentUser!.id,
+      deletedAt: null,
+      deletedById: null,
+      updatedById: ctx.currentUser!.id,
     },
     include: evidenceAuditInclude,
   })

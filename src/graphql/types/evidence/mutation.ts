@@ -33,5 +33,13 @@ export const EvidenceMutation = extendType({
       },
       resolve: EvidenceMutationResolvers.deleteEvidence,
     })
+
+    t.field('restoreEvidence', {
+      type: 'Evidence',
+      args: {
+        id: nonNull(intArg()),
+      },
+      resolve: EvidenceMutationResolvers.restoreEvidence,
+    })
   },
 })

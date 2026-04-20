@@ -306,6 +306,7 @@ type Mutation {
   logout: Boolean!
   refreshToken(refreshToken: String!): AuthTokens!
   register(email: String!, name: String!, password: String!): AuthResponse!
+  restoreEvidence(id: Int!): Evidence
   updateCorrectiveAction(completedAt: DateTime, description: String, dueAt: DateTime, id: Int!, nonConformityId: Int, ownerId: Int, status: CorrectiveActionStatus, title: String): CorrectiveAction
   updateEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int, id: Int!, notes: String, result: EffectivenessResult): EffectivenessCheck
   updateEvidence(id: Int!, label: String): Evidence

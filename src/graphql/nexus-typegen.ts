@@ -467,6 +467,7 @@ export interface NexusGenFieldTypes {
     logout: boolean; // Boolean!
     refreshToken: NexusGenRootTypes['AuthTokens']; // AuthTokens!
     register: NexusGenRootTypes['AuthResponse']; // AuthResponse!
+    restoreEvidence: NexusGenRootTypes['Evidence'] | null; // Evidence
     updateCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
     updateEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     updateEvidence: NexusGenRootTypes['Evidence'] | null; // Evidence
@@ -685,6 +686,7 @@ export interface NexusGenFieldTypeNames {
     logout: 'Boolean'
     refreshToken: 'AuthTokens'
     register: 'AuthResponse'
+    restoreEvidence: 'Evidence'
     updateCorrectiveAction: 'CorrectiveAction'
     updateEffectivenessCheck: 'EffectivenessCheck'
     updateEvidence: 'Evidence'
@@ -879,6 +881,9 @@ export interface NexusGenArgTypes {
       email: string; // String!
       name: string; // String!
       password: string; // String!
+    }
+    restoreEvidence: { // args
+      id: number; // Int!
     }
     updateCorrectiveAction: { // args
       completedAt?: NexusGenScalars['DateTime'] | null; // DateTime

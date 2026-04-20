@@ -2,6 +2,7 @@ import { GraphQLError } from 'graphql'
 import { describe, expect, it, vi } from 'vitest'
 import { createEvidence } from '@/graphql/resolvers/evidence/mutation/createEvidence'
 import { deleteEvidence } from '@/graphql/resolvers/evidence/mutation/deleteEvidence'
+import { restoreEvidence } from '@/graphql/resolvers/evidence/mutation/restoreEvidence'
 import { updateEvidence } from '@/graphql/resolvers/evidence/mutation/updateEvidence'
 import { evidenceLoad } from '@/graphql/resolvers/evidence/query/evidenceLoad'
 import { MinioStorageService } from '@/lib/storage/minio'
@@ -140,7 +141,7 @@ describe('Evidence resolvers', () => {
     )
   })
 
-  it('should delete evidence and remove object from storage', async () => {
+  it('should soft delete evidence without removing object from storage', async () => {
     const ctx = createContext({
       id: 1,
       email: 'quality@example.com',
@@ -176,12 +177,63 @@ describe('Evidence resolvers', () => {
 
     const result = await deleteEvidence({}, { id: 3 }, ctx, {} as never)
 
-    expect(MinioStorageService.removeObject).toHaveBeenCalledWith('correctiveAction/2/checklist.txt')
+    expect(MinioStorageService.removeObject).not.toHaveBeenCalled()
     if (!result) {
       throw new Error('Expected deleteEvidence result')
     }
 
     expect(result.id).toBe(3)
+  })
+
+  it('should restore a previously deleted evidence', async () => {
+    const ctx = createContext({
+      id: 1,
+      email: 'quality@example.com',
+      name: 'Quality',
+      role: 'QUALITY_MANAGER',
+    })
+
+    ctx.prisma.evidence.findFirst.mockResolvedValue({
+      id: 11,
+      deletedAt: new Date('2026-04-20T10:00:00.000Z'),
+      deletedById: 1,
+    })
+    ctx.prisma.evidence.update.mockResolvedValue({
+      id: 11,
+      fileName: 'plano.pdf',
+      label: 'Plano restaurado',
+      objectKey: 'strategicObjective/6/plano.pdf',
+      bucketName: 'evidences',
+      contentType: 'application/pdf',
+      sizeBytes: 800,
+      uploadedById: 1,
+      uploadedBy: { id: 1, name: 'Quality' },
+      updatedById: 1,
+      updatedBy: { id: 1, name: 'Quality' },
+      deletedById: null,
+      deletedBy: null,
+      deletedAt: null,
+      strategicObjectiveId: 6,
+      initiativeId: null,
+      indicatorId: null,
+      nonConformityId: null,
+      correctiveActionId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+
+    const result = await restoreEvidence({}, { id: 11 }, ctx, {} as never)
+
+    expect(ctx.prisma.evidence.update).toHaveBeenCalledWith({
+      where: { id: 11 },
+      data: {
+        deletedAt: null,
+        deletedById: null,
+        updatedById: 1,
+      },
+      include: expect.any(Object),
+    })
+    expect(result?.deletedAt).toBeNull()
   })
 
   it('should update evidence label and track editor', async () => {
