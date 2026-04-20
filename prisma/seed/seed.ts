@@ -6,12 +6,14 @@ import { seedInitiatives } from './initiatives'
 import { seedNonConformities } from './non-conformities'
 import { seedStrategicObjectives } from './strategic-objectives'
 import { seedUsers } from './users'
+import { seedEvidences } from './evidences'
 
 const prisma = new PrismaClient()
 
 try {
   Bun.write(Bun.stdout, '🗑️  Cleaning up the database...\n')
   await prisma.effectivenessCheck.deleteMany()
+  await prisma.evidence.deleteMany()
   await prisma.correctiveAction.deleteMany()
   await prisma.nonConformity.deleteMany()
   await prisma.indicatorEntry.deleteMany()
@@ -28,10 +30,11 @@ try {
   const indicatorEntries = await seedIndicatorEntries(prisma)
   const nonConformities = await seedNonConformities(prisma)
   const capas = await seedCapas(prisma)
+  const evidences = await seedEvidences(prisma)
 
   Bun.write(
     Bun.stdout,
-    `✅ Seeding completed! ${users.length} users, ${objectives.length} strategic objectives, ${initiatives.length} initiatives, ${indicators.length} indicators, ${indicatorEntries.length} entries, ${nonConformities.length} non-conformities, ${capas.actions.length} corrective actions and ${capas.effectivenessChecks.length} effectiveness checks available.\n`
+    `✅ Seeding completed! ${users.length} users, ${objectives.length} strategic objectives, ${initiatives.length} initiatives, ${indicators.length} indicators, ${indicatorEntries.length} entries, ${nonConformities.length} non-conformities, ${capas.actions.length} corrective actions, ${capas.effectivenessChecks.length} effectiveness checks and ${evidences.length} evidences available.\n`
   )
 } catch (error) {
   console.error('❌ Seed failed.')

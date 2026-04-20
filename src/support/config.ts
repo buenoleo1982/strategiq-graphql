@@ -12,9 +12,16 @@ const envSchema = z.object({
   LOG_MAX_SIZE: z.string().default('10M'),
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
 
-  JWT_SECRET: z.string().min(1, 'JWT_SECRET é obrigatório'),
+  JWT_SECRET: z.string().min(1, 'JWT_SECRET é obrigatório').default('strategiq-dev-secret'),
   REDIS_PORT: z.string().default('6379'),
   REDIS_HOST: z.string().default('localhost'),
+  MINIO_PORT: z.coerce.number().default(9000),
+  MINIO_CONSOLE_PORT: z.coerce.number().default(9001),
+  MINIO_ENDPOINT: z.string().default('localhost'),
+  MINIO_USE_SSL: z.coerce.boolean().default(false),
+  MINIO_ACCESS_KEY: z.string().min(1, 'MINIO_ACCESS_KEY é obrigatório').default('strategiq'),
+  MINIO_SECRET_KEY: z.string().min(1, 'MINIO_SECRET_KEY é obrigatório').default('strategiq123'),
+  MINIO_BUCKET_NAME: z.string().min(1, 'MINIO_BUCKET_NAME é obrigatório').default('evidences'),
 })
 
 export const env = envSchema.parse(process.env)

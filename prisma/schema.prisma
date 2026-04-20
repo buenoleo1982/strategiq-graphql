@@ -74,13 +74,14 @@ enum EffectivenessResult {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      UserRole @default(ANALYST)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                Int        @id @default(autoincrement())
+  name              String
+  email             String     @unique
+  password          String
+  role              UserRole   @default(ANALYST)
+  uploadedEvidences Evidence[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 }
 
 model StrategicObjective {
@@ -93,21 +94,23 @@ model StrategicObjective {
   endsAt      DateTime?
   ownerId     Int?
   initiatives Initiative[]
+  evidences   Evidence[]
   createdAt   DateTime                   @default(now())
   updatedAt   DateTime                   @updatedAt
 }
 
 model Initiative {
-  id                 Int              @id @default(autoincrement())
+  id                   Int                @id @default(autoincrement())
   strategicObjectiveId Int
-  strategicObjective  StrategicObjective @relation(fields: [strategicObjectiveId], references: [id], onDelete: Cascade)
-  title              String
-  description        String?
-  status             InitiativeStatus @default(PLANNED)
-  dueAt              DateTime?
-  ownerId            Int?
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
+  strategicObjective   StrategicObjective @relation(fields: [strategicObjectiveId], references: [id], onDelete: Cascade)
+  title                String
+  description          String?
+  status               InitiativeStatus   @default(PLANNED)
+  dueAt                DateTime?
+  ownerId              Int?
+  evidences            Evidence[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 }
 
 model Indicator {
@@ -120,6 +123,7 @@ model Indicator {
   frequency   IndicatorFrequency @default(MONTHLY)
   ownerId     Int?
   entries     IndicatorEntry[]
+  evidences   Evidence[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 }
@@ -137,33 +141,35 @@ model IndicatorEntry {
 }
 
 model NonConformity {
-  id          Int                  @id @default(autoincrement())
-  title       String
-  description String?
-  severity    NonConformitySeverity @default(MEDIUM)
-  status      NonConformityStatus   @default(OPEN)
-  source      String?
-  department  String?
-  occurredAt  DateTime?
-  ownerId     Int?
+  id                Int                   @id @default(autoincrement())
+  title             String
+  description       String?
+  severity          NonConformitySeverity @default(MEDIUM)
+  status            NonConformityStatus   @default(OPEN)
+  source            String?
+  department        String?
+  occurredAt        DateTime?
+  ownerId           Int?
+  evidences         Evidence[]
   correctiveActions CorrectiveAction[]
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
 }
 
 model CorrectiveAction {
-  id               Int                    @id @default(autoincrement())
-  nonConformityId  Int
-  nonConformity    NonConformity          @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
-  title            String
-  description      String?
-  status           CorrectiveActionStatus @default(OPEN)
-  dueAt            DateTime?
-  completedAt      DateTime?
-  ownerId          Int?
+  id                  Int                    @id @default(autoincrement())
+  nonConformityId     Int
+  nonConformity       NonConformity          @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
+  title               String
+  description         String?
+  status              CorrectiveActionStatus @default(OPEN)
+  dueAt               DateTime?
+  completedAt         DateTime?
+  ownerId             Int?
+  evidences           Evidence[]
   effectivenessChecks EffectivenessCheck[]
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
 }
 
 model EffectivenessCheck {
@@ -175,4 +181,28 @@ model EffectivenessCheck {
   notes              String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+}
+
+model Evidence {
+  id                  Int                @id @default(autoincrement())
+  fileName            String
+  label               String?
+  objectKey           String             @unique
+  bucketName          String
+  contentType         String
+  sizeBytes           Int
+  uploadedById        Int?
+  uploadedBy          User?              @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  strategicObjectiveId Int?
+  strategicObjective  StrategicObjective? @relation(fields: [strategicObjectiveId], references: [id], onDelete: Cascade)
+  initiativeId        Int?
+  initiative          Initiative?        @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  indicatorId         Int?
+  indicator           Indicator?         @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  nonConformityId     Int?
+  nonConformity       NonConformity?     @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
+  correctiveActionId  Int?
+  correctiveAction    CorrectiveAction?  @relation(fields: [correctiveActionId], references: [id], onDelete: Cascade)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 }

@@ -23,10 +23,27 @@ services:
     networks:
       - app-network
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio-strategiq
+    command: server /data --console-address ":9001"
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-strategiq}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-strategiq123}
+    networks:
+      - app-network
+
 volumes:
   pg-data:
     driver: local
   redis_data:
+    driver: local
+  minio_data:
     driver: local
 
 networks:

@@ -48,6 +48,14 @@ export interface NexusGenInputs {
     column: NexusGenEnums['EffectivenessCheckOrderBy']; // EffectivenessCheckOrderBy!
     direction: NexusGenEnums['OrderDirection']; // OrderDirection!
   }
+  EvidenceArgs: { // input type
+    correctiveActionId?: number | null; // Int
+    id?: number | null; // Int
+    indicatorId?: number | null; // Int
+    initiativeId?: number | null; // Int
+    nonConformityId?: number | null; // Int
+    strategicObjectiveId?: number | null; // Int
+  }
   IndicatorArgs: { // input type
     frequency?: NexusGenEnums['IndicatorFrequency'] | null; // IndicatorFrequency
     id?: number | null; // Int
@@ -188,6 +196,25 @@ export interface NexusGenObjects {
   }
   EffectivenessCheckList: { // root type
     nodes?: NexusGenRootTypes['EffectivenessCheck'][] | null; // [EffectivenessCheck!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
+  Evidence: { // root type
+    contentType: string; // String!
+    correctiveActionId?: number | null; // Int
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    fileName: string; // String!
+    id: number; // Int!
+    indicatorId?: number | null; // Int
+    initiativeId?: number | null; // Int
+    label?: string | null; // String
+    nonConformityId?: number | null; // Int
+    sizeBytes: number; // Int!
+    strategicObjectiveId?: number | null; // Int
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    uploadedById?: number | null; // Int
+  }
+  EvidenceList: { // root type
+    nodes?: NexusGenRootTypes['Evidence'][] | null; // [Evidence!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Indicator: { // root type
@@ -338,6 +365,26 @@ export interface NexusGenFieldTypes {
     nodes: NexusGenRootTypes['EffectivenessCheck'][] | null; // [EffectivenessCheck!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
+  Evidence: { // field return type
+    contentType: string; // String!
+    correctiveActionId: number | null; // Int
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    downloadUrl: string; // String!
+    fileName: string; // String!
+    id: number; // Int!
+    indicatorId: number | null; // Int
+    initiativeId: number | null; // Int
+    label: string | null; // String
+    nonConformityId: number | null; // Int
+    sizeBytes: number; // Int!
+    strategicObjectiveId: number | null; // Int
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    uploadedById: number | null; // Int
+  }
+  EvidenceList: { // field return type
+    nodes: NexusGenRootTypes['Evidence'][] | null; // [Evidence!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Indicator: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description: string | null; // String
@@ -397,6 +444,7 @@ export interface NexusGenFieldTypes {
     createUser: NexusGenRootTypes['User'] | null; // User
     deleteCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
     deleteEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
+    deleteEvidence: NexusGenRootTypes['Evidence'] | null; // Evidence
     deleteIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     deleteIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     deleteInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
@@ -444,6 +492,7 @@ export interface NexusGenFieldTypes {
     correctiveActionLoad: NexusGenRootTypes['CorrectiveActionList'] | null; // CorrectiveActionList
     effectivenessCheckGet: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     effectivenessCheckLoad: NexusGenRootTypes['EffectivenessCheckList'] | null; // EffectivenessCheckList
+    evidenceLoad: NexusGenRootTypes['EvidenceList'] | null; // EvidenceList
     indicatorEntryGet: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     indicatorEntryLoad: NexusGenRootTypes['IndicatorEntryList'] | null; // IndicatorEntryList
     indicatorGet: NexusGenRootTypes['Indicator'] | null; // Indicator
@@ -526,6 +575,26 @@ export interface NexusGenFieldTypeNames {
     nodes: 'EffectivenessCheck'
     pagination: 'Pagination'
   }
+  Evidence: { // field return type name
+    contentType: 'String'
+    correctiveActionId: 'Int'
+    createdAt: 'DateTime'
+    downloadUrl: 'String'
+    fileName: 'String'
+    id: 'Int'
+    indicatorId: 'Int'
+    initiativeId: 'Int'
+    label: 'String'
+    nonConformityId: 'Int'
+    sizeBytes: 'Int'
+    strategicObjectiveId: 'Int'
+    updatedAt: 'DateTime'
+    uploadedById: 'Int'
+  }
+  EvidenceList: { // field return type name
+    nodes: 'Evidence'
+    pagination: 'Pagination'
+  }
   Indicator: { // field return type name
     createdAt: 'DateTime'
     description: 'String'
@@ -585,6 +654,7 @@ export interface NexusGenFieldTypeNames {
     createUser: 'User'
     deleteCorrectiveAction: 'CorrectiveAction'
     deleteEffectivenessCheck: 'EffectivenessCheck'
+    deleteEvidence: 'Evidence'
     deleteIndicator: 'Indicator'
     deleteIndicatorEntry: 'IndicatorEntry'
     deleteInitiative: 'Initiative'
@@ -632,6 +702,7 @@ export interface NexusGenFieldTypeNames {
     correctiveActionLoad: 'CorrectiveActionList'
     effectivenessCheckGet: 'EffectivenessCheck'
     effectivenessCheckLoad: 'EffectivenessCheckList'
+    evidenceLoad: 'EvidenceList'
     indicatorEntryGet: 'IndicatorEntry'
     indicatorEntryLoad: 'IndicatorEntryList'
     indicatorGet: 'Indicator'
@@ -745,6 +816,9 @@ export interface NexusGenArgTypes {
       id: number; // Int!
     }
     deleteEffectivenessCheck: { // args
+      id: number; // Int!
+    }
+    deleteEvidence: { // args
       id: number; // Int!
     }
     deleteIndicator: { // args
@@ -863,6 +937,10 @@ export interface NexusGenArgTypes {
     effectivenessCheckLoad: { // args
       filterArgs?: NexusGenInputs['EffectivenessCheckArgs'] | null; // EffectivenessCheckArgs
       order?: NexusGenInputs['EffectivenessCheckOrderInput'] | null; // EffectivenessCheckOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
+    evidenceLoad: { // args
+      filterArgs?: NexusGenInputs['EvidenceArgs'] | null; // EvidenceArgs
       pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
     }
     indicatorEntryGet: { // args

@@ -5,6 +5,8 @@ import fastify, { type FastifyReply, type FastifyRequest } from 'fastify'
 import { createContext } from './context'
 import { schema } from './graphql/schema'
 import { logger } from './lib/logger'
+import { MinioStorageService } from './lib/storage/minio'
+import { registerEvidenceRoutes } from './routes/evidences'
 import { env } from './support/config'
 
 const app = fastify({ logger: false })
@@ -15,6 +17,8 @@ await app.register(cors, {
   credentials: true,
 })
 
+await registerEvidenceRoutes(app)
+
 // Criar instância do Apollo Server
 const server = new ApolloServer({
   schema,
@@ -23,6 +27,8 @@ const server = new ApolloServer({
 })
 
 await server.start()
+
+await MinioStorageService.ensureEvidenceBucket()
 
 // Registrar rota GraphQL usando fastifyApolloHandler
 app.route({

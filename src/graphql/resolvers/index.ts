@@ -1,5 +1,6 @@
 export * from './auth'
 export * from './capa'
+export * from './evidence'
 export * from './indicator-entry'
 export * from './indicator'
 export * from './initiative'
