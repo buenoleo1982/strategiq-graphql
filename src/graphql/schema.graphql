@@ -191,11 +191,58 @@ enum IndicatorTargetStatus {
   ON_TARGET
 }
 
+type Initiative {
+  createdAt: DateTime!
+  description: String
+  dueAt: DateTime
+  id: Int!
+  ownerId: Int
+  status: InitiativeStatus!
+  strategicObjectiveId: Int!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input InitiativeArgs {
+  id: Int
+  ownerId: Int
+  status: InitiativeStatus
+  strategicObjectiveId: Int
+  title: String
+}
+
+type InitiativeList {
+  nodes: [Initiative!]
+  pagination: Pagination!
+}
+
+enum InitiativeOrderBy {
+  CREATED_AT
+  DUE_AT
+  ID
+  STATUS
+  STRATEGIC_OBJECTIVE_ID
+  TITLE
+}
+
+input InitiativeOrderInput {
+  column: InitiativeOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum InitiativeStatus {
+  BLOCKED
+  COMPLETED
+  IN_PROGRESS
+  PLANNED
+}
+
 type Mutation {
   createCorrectiveAction(completedAt: DateTime, description: String, dueAt: DateTime, nonConformityId: Int!, ownerId: Int, status: CorrectiveActionStatus, title: String!): CorrectiveAction
   createEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int!, notes: String, result: EffectivenessResult!): EffectivenessCheck
   createIndicator(description: String, formula: String, frequency: IndicatorFrequency, name: String!, ownerId: Int, targetValue: Float, unit: String): Indicator
   createIndicatorEntry(collectedAt: DateTime, indicatorId: Int!, notes: String, source: String, value: Float!): IndicatorEntry
+  createInitiative(description: String, dueAt: DateTime, ownerId: Int, status: InitiativeStatus, strategicObjectiveId: Int!, title: String!): Initiative
   createNonConformity(department: String, description: String, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String!): NonConformity
   createStrategicObjective(description: String, endsAt: DateTime, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String!): StrategicObjective
   createUser(email: String!, name: String!, password: String!): User
@@ -203,6 +250,7 @@ type Mutation {
   deleteEffectivenessCheck(id: Int!): EffectivenessCheck
   deleteIndicator(id: Int!): Indicator
   deleteIndicatorEntry(id: Int!): IndicatorEntry
+  deleteInitiative(id: Int!): Initiative
   deleteNonConformity(id: Int!): NonConformity
   deleteStrategicObjective(id: Int!): StrategicObjective
   deleteUser(id: Int!): User
@@ -214,6 +262,7 @@ type Mutation {
   updateEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int, id: Int!, notes: String, result: EffectivenessResult): EffectivenessCheck
   updateIndicator(description: String, formula: String, frequency: IndicatorFrequency, id: Int!, name: String, ownerId: Int, targetValue: Float, unit: String): Indicator
   updateIndicatorEntry(collectedAt: DateTime, id: Int!, indicatorId: Int, notes: String, source: String, value: Float): IndicatorEntry
+  updateInitiative(description: String, dueAt: DateTime, id: Int!, ownerId: Int, status: InitiativeStatus, strategicObjectiveId: Int, title: String): Initiative
   updateNonConformity(department: String, description: String, id: Int!, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String): NonConformity
   updateStrategicObjective(description: String, endsAt: DateTime, id: Int!, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String): StrategicObjective
   updateUser(email: String, id: Int!, name: String): User
@@ -301,6 +350,8 @@ type Query {
   indicatorEntryLoad(filterArgs: IndicatorEntryArgs, order: IndicatorEntryOrderInput, pageArgs: PageArgs): IndicatorEntryList
   indicatorGet(id: Int!): Indicator
   indicatorLoad(filterArgs: IndicatorArgs, order: IndicatorOrderInput, pageArgs: PageArgs): IndicatorList
+  initiativeGet(id: Int): Initiative
+  initiativeLoad(filterArgs: InitiativeArgs, order: InitiativeOrderInput, pageArgs: PageArgs): InitiativeList
   me: User
   nonConformityGet(id: Int!): NonConformity
   nonConformityLoad(filterArgs: NonConformityArgs, order: NonConformityOrderInput, pageArgs: PageArgs): NonConformityList

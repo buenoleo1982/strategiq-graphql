@@ -67,6 +67,17 @@ export interface NexusGenInputs {
     column: NexusGenEnums['IndicatorOrderBy']; // IndicatorOrderBy!
     direction: NexusGenEnums['OrderDirection']; // OrderDirection!
   }
+  InitiativeArgs: { // input type
+    id?: number | null; // Int
+    ownerId?: number | null; // Int
+    status?: NexusGenEnums['InitiativeStatus'] | null; // InitiativeStatus
+    strategicObjectiveId?: number | null; // Int
+    title?: string | null; // String
+  }
+  InitiativeOrderInput: { // input type
+    column: NexusGenEnums['InitiativeOrderBy']; // InitiativeOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
   NonConformityArgs: { // input type
     department?: string | null; // String
     id?: number | null; // Int
@@ -119,6 +130,8 @@ export interface NexusGenEnums {
   IndicatorFrequency: "DAILY" | "MONTHLY" | "QUARTERLY" | "WEEKLY" | "YEARLY"
   IndicatorOrderBy: "CREATED_AT" | "FREQUENCY" | "ID" | "NAME" | "TARGET_VALUE"
   IndicatorTargetStatus: "BELOW_TARGET" | "NO_DATA" | "NO_TARGET" | "ON_TARGET"
+  InitiativeOrderBy: "CREATED_AT" | "DUE_AT" | "ID" | "STATUS" | "STRATEGIC_OBJECTIVE_ID" | "TITLE"
+  InitiativeStatus: "BLOCKED" | "COMPLETED" | "IN_PROGRESS" | "PLANNED"
   NonConformityOrderBy: "CREATED_AT" | "ID" | "OCCURRED_AT" | "SEVERITY" | "STATUS" | "TITLE"
   NonConformitySeverity: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
   NonConformityStatus: "CLOSED" | "IN_PROGRESS" | "OPEN" | "RESOLVED"
@@ -205,6 +218,21 @@ export interface NexusGenObjects {
   }
   IndicatorList: { // root type
     nodes?: NexusGenRootTypes['Indicator'][] | null; // [Indicator!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
+  Initiative: { // root type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    ownerId?: number | null; // Int
+    status: NexusGenEnums['InitiativeStatus']; // InitiativeStatus!
+    strategicObjectiveId: number; // Int!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  InitiativeList: { // root type
+    nodes?: NexusGenRootTypes['Initiative'][] | null; // [Initiative!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   Mutation: {};
@@ -343,11 +371,27 @@ export interface NexusGenFieldTypes {
     nodes: NexusGenRootTypes['Indicator'][] | null; // [Indicator!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
+  Initiative: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description: string | null; // String
+    dueAt: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    ownerId: number | null; // Int
+    status: NexusGenEnums['InitiativeStatus']; // InitiativeStatus!
+    strategicObjectiveId: number; // Int!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  InitiativeList: { // field return type
+    nodes: NexusGenRootTypes['Initiative'][] | null; // [Initiative!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Mutation: { // field return type
     createCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
     createEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     createIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     createIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
+    createInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
     createNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     createStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     createUser: NexusGenRootTypes['User'] | null; // User
@@ -355,6 +399,7 @@ export interface NexusGenFieldTypes {
     deleteEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     deleteIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     deleteIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
+    deleteInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
     deleteNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     deleteStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     deleteUser: NexusGenRootTypes['User'] | null; // User
@@ -366,6 +411,7 @@ export interface NexusGenFieldTypes {
     updateEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
     updateIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     updateIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
+    updateInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
     updateNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     updateStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     updateUser: NexusGenRootTypes['User'] | null; // User
@@ -402,6 +448,8 @@ export interface NexusGenFieldTypes {
     indicatorEntryLoad: NexusGenRootTypes['IndicatorEntryList'] | null; // IndicatorEntryList
     indicatorGet: NexusGenRootTypes['Indicator'] | null; // Indicator
     indicatorLoad: NexusGenRootTypes['IndicatorList'] | null; // IndicatorList
+    initiativeGet: NexusGenRootTypes['Initiative'] | null; // Initiative
+    initiativeLoad: NexusGenRootTypes['InitiativeList'] | null; // InitiativeList
     me: NexusGenRootTypes['User'] | null; // User
     nonConformityGet: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     nonConformityLoad: NexusGenRootTypes['NonConformityList'] | null; // NonConformityList
@@ -511,11 +559,27 @@ export interface NexusGenFieldTypeNames {
     nodes: 'Indicator'
     pagination: 'Pagination'
   }
+  Initiative: { // field return type name
+    createdAt: 'DateTime'
+    description: 'String'
+    dueAt: 'DateTime'
+    id: 'Int'
+    ownerId: 'Int'
+    status: 'InitiativeStatus'
+    strategicObjectiveId: 'Int'
+    title: 'String'
+    updatedAt: 'DateTime'
+  }
+  InitiativeList: { // field return type name
+    nodes: 'Initiative'
+    pagination: 'Pagination'
+  }
   Mutation: { // field return type name
     createCorrectiveAction: 'CorrectiveAction'
     createEffectivenessCheck: 'EffectivenessCheck'
     createIndicator: 'Indicator'
     createIndicatorEntry: 'IndicatorEntry'
+    createInitiative: 'Initiative'
     createNonConformity: 'NonConformity'
     createStrategicObjective: 'StrategicObjective'
     createUser: 'User'
@@ -523,6 +587,7 @@ export interface NexusGenFieldTypeNames {
     deleteEffectivenessCheck: 'EffectivenessCheck'
     deleteIndicator: 'Indicator'
     deleteIndicatorEntry: 'IndicatorEntry'
+    deleteInitiative: 'Initiative'
     deleteNonConformity: 'NonConformity'
     deleteStrategicObjective: 'StrategicObjective'
     deleteUser: 'User'
@@ -534,6 +599,7 @@ export interface NexusGenFieldTypeNames {
     updateEffectivenessCheck: 'EffectivenessCheck'
     updateIndicator: 'Indicator'
     updateIndicatorEntry: 'IndicatorEntry'
+    updateInitiative: 'Initiative'
     updateNonConformity: 'NonConformity'
     updateStrategicObjective: 'StrategicObjective'
     updateUser: 'User'
@@ -570,6 +636,8 @@ export interface NexusGenFieldTypeNames {
     indicatorEntryLoad: 'IndicatorEntryList'
     indicatorGet: 'Indicator'
     indicatorLoad: 'IndicatorList'
+    initiativeGet: 'Initiative'
+    initiativeLoad: 'InitiativeList'
     me: 'User'
     nonConformityGet: 'NonConformity'
     nonConformityLoad: 'NonConformityList'
@@ -641,6 +709,14 @@ export interface NexusGenArgTypes {
       source?: string | null; // String
       value: number; // Float!
     }
+    createInitiative: { // args
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      ownerId?: number | null; // Int
+      status?: NexusGenEnums['InitiativeStatus'] | null; // InitiativeStatus
+      strategicObjectiveId: number; // Int!
+      title: string; // String!
+    }
     createNonConformity: { // args
       department?: string | null; // String
       description?: string | null; // String
@@ -675,6 +751,9 @@ export interface NexusGenArgTypes {
       id: number; // Int!
     }
     deleteIndicatorEntry: { // args
+      id: number; // Int!
+    }
+    deleteInitiative: { // args
       id: number; // Int!
     }
     deleteNonConformity: { // args
@@ -732,6 +811,15 @@ export interface NexusGenArgTypes {
       notes?: string | null; // String
       source?: string | null; // String
       value?: number | null; // Float
+    }
+    updateInitiative: { // args
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      id: number; // Int!
+      ownerId?: number | null; // Int
+      status?: NexusGenEnums['InitiativeStatus'] | null; // InitiativeStatus
+      strategicObjectiveId?: number | null; // Int
+      title?: string | null; // String
     }
     updateNonConformity: { // args
       department?: string | null; // String
@@ -791,6 +879,14 @@ export interface NexusGenArgTypes {
     indicatorLoad: { // args
       filterArgs?: NexusGenInputs['IndicatorArgs'] | null; // IndicatorArgs
       order?: NexusGenInputs['IndicatorOrderInput'] | null; // IndicatorOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
+    initiativeGet: { // args
+      id?: number | null; // Int
+    }
+    initiativeLoad: { // args
+      filterArgs?: NexusGenInputs['InitiativeArgs'] | null; // InitiativeArgs
+      order?: NexusGenInputs['InitiativeOrderInput'] | null; // InitiativeOrderInput
       pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
     }
     nonConformityGet: { // args
