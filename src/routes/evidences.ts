@@ -124,12 +124,12 @@ export async function downloadEvidenceHandler(request: FastifyRequest<{ Params: 
     return reply.status(404).send({ message: 'Evidência não encontrada' })
   }
 
-  const objectStream = await MinioStorageService.getObjectStream(evidence.objectKey)
+  const objectBuffer = await MinioStorageService.getObjectBuffer(evidence.objectKey)
 
   reply.header('Content-Type', evidence.contentType)
   reply.header('Content-Disposition', `inline; filename="${evidence.fileName}"`)
 
-  return reply.send(objectStream)
+  return reply.send(objectBuffer)
 }
 
 export async function registerEvidenceRoutes(app: FastifyInstance) {

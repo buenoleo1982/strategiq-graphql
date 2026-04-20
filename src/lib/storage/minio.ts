@@ -1,15 +1,35 @@
+import { AwsClient } from 'aws4fetch'
 import { env } from '@/support/config'
-import { Client } from 'minio'
 
 const evidenceBucket = env.MINIO_BUCKET_NAME
+const protocol = env.MINIO_USE_SSL ? 'https' : 'http'
+const baseUrl = `${protocol}://${env.MINIO_ENDPOINT}:${env.MINIO_PORT}`
 
-const client = new Client({
-  endPoint: env.MINIO_ENDPOINT,
-  port: env.MINIO_PORT,
-  useSSL: env.MINIO_USE_SSL,
-  accessKey: env.MINIO_ACCESS_KEY,
-  secretKey: env.MINIO_SECRET_KEY,
+const client = new AwsClient({
+  accessKeyId: env.MINIO_ACCESS_KEY,
+  secretAccessKey: env.MINIO_SECRET_KEY,
+  service: 's3',
+  region: 'us-east-1',
 })
+
+function encodeObjectKey(objectKey: string) {
+  return objectKey
+    .split('/')
+    .map(part => encodeURIComponent(part))
+    .join('/')
+}
+
+function buildBucketUrl() {
+  return `${baseUrl}/${evidenceBucket}`
+}
+
+function buildObjectUrl(objectKey: string) {
+  return `${buildBucketUrl()}/${encodeObjectKey(objectKey)}`
+}
+
+async function signedFetch(input: string, init?: RequestInit) {
+  return client.fetch(input, init)
+}
 
 export class MinioStorageService {
   private static bucketReady = false
@@ -23,10 +43,20 @@ export class MinioStorageService {
       return
     }
 
-    const exists = await client.bucketExists(evidenceBucket)
+    const existsResponse = await signedFetch(buildBucketUrl(), {
+      method: 'HEAD',
+    })
 
-    if (!exists) {
-      await client.makeBucket(evidenceBucket)
+    if (existsResponse.status === 404) {
+      const createResponse = await signedFetch(buildBucketUrl(), {
+        method: 'PUT',
+      })
+
+      if (!createResponse.ok) {
+        throw new Error(`Failed to create bucket: ${createResponse.status}`)
+      }
+    } else if (!existsResponse.ok) {
+      throw new Error(`Failed to check bucket: ${existsResponse.status}`)
     }
 
     this.bucketReady = true
@@ -48,16 +78,38 @@ export class MinioStorageService {
   }) {
     await this.ensureEvidenceBucket()
 
-    await client.putObject(evidenceBucket, input.objectKey, input.buffer, input.buffer.length, {
-      'Content-Type': input.contentType,
+    const response = await signedFetch(buildObjectUrl(input.objectKey), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': input.contentType,
+      },
+      body: input.buffer,
     })
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload object: ${response.status}`)
+    }
   }
 
-  static getObjectStream(objectKey: string) {
-    return client.getObject(evidenceBucket, objectKey)
+  static async getObjectBuffer(objectKey: string) {
+    const response = await signedFetch(buildObjectUrl(objectKey), {
+      method: 'GET',
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch object: ${response.status}`)
+    }
+
+    return Buffer.from(await response.arrayBuffer())
   }
 
   static async removeObject(objectKey: string) {
-    await client.removeObject(evidenceBucket, objectKey)
+    const response = await signedFetch(buildObjectUrl(objectKey), {
+      method: 'DELETE',
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete object: ${response.status}`)
+    }
   }
 }
