@@ -1,4 +1,4 @@
-import { deleteEvidence, updateEvidence } from './mutation'
+import { createEvidence, deleteEvidence, updateEvidence } from './mutation'
 import { evidenceLoad } from './query'
 
 export const EvidenceQueryResolvers = {
@@ -6,6 +6,7 @@ export const EvidenceQueryResolvers = {
 }
 
 export const EvidenceMutationResolvers = {
+  createEvidence,
   updateEvidence,
   deleteEvidence,
 }

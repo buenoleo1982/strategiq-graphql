@@ -1,6 +1,7 @@
-import { inputObjectType, objectType } from 'nexus'
+import { enumType, inputObjectType, objectType } from 'nexus'
 import { Pagination } from '../utils'
 import { buildEvidenceDownloadUrl } from '@/service/evidences'
+import { evidenceEntityTypes } from '@/service/evidences'
 
 type EvidenceWithAuditNames = {
   uploadedBy?: { name: string | null } | null
@@ -40,6 +41,11 @@ export const Evidence = objectType({
     t.nonNull.field('updatedAt', { type: 'DateTime' })
     t.field('deletedAt', { type: 'DateTime' })
   },
+})
+
+export const EvidenceEntityTypeEnum = enumType({
+  name: 'EvidenceEntityType',
+  members: evidenceEntityTypes,
 })
 
 export const EvidenceList = objectType({

@@ -135,6 +135,7 @@ export interface NexusGenEnums {
   CorrectiveActionStatus: "CANCELLED" | "COMPLETED" | "IN_PROGRESS" | "OPEN"
   EffectivenessCheckOrderBy: "CHECKED_AT" | "CORRECTIVE_ACTION_ID" | "CREATED_AT" | "ID" | "RESULT"
   EffectivenessResult: "EFFECTIVE" | "INEFFECTIVE" | "NEEDS_MONITORING"
+  EvidenceEntityType: "correctiveAction" | "indicator" | "initiative" | "nonConformity" | "strategicObjective"
   IndicatorEntryOrderBy: "COLLECTED_AT" | "CREATED_AT" | "ID" | "INDICATOR_ID" | "VALUE"
   IndicatorFrequency: "DAILY" | "MONTHLY" | "QUARTERLY" | "WEEKLY" | "YEARLY"
   IndicatorOrderBy: "CREATED_AT" | "FREQUENCY" | "ID" | "NAME" | "TARGET_VALUE"
@@ -446,6 +447,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
     createEffectivenessCheck: NexusGenRootTypes['EffectivenessCheck'] | null; // EffectivenessCheck
+    createEvidence: NexusGenRootTypes['Evidence'] | null; // Evidence
     createIndicator: NexusGenRootTypes['Indicator'] | null; // Indicator
     createIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     createInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
@@ -663,6 +665,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
     createCorrectiveAction: 'CorrectiveAction'
     createEffectivenessCheck: 'EffectivenessCheck'
+    createEvidence: 'Evidence'
     createIndicator: 'Indicator'
     createIndicatorEntry: 'IndicatorEntry'
     createInitiative: 'Initiative'
@@ -781,6 +784,14 @@ export interface NexusGenArgTypes {
       correctiveActionId: number; // Int!
       notes?: string | null; // String
       result: NexusGenEnums['EffectivenessResult']; // EffectivenessResult!
+    }
+    createEvidence: { // args
+      base64Data: string; // String!
+      contentType: string; // String!
+      entityId: number; // Int!
+      entityType: NexusGenEnums['EvidenceEntityType']; // EvidenceEntityType!
+      fileName: string; // String!
+      label?: string | null; // String
     }
     createIndicator: { // args
       description?: string | null; // String

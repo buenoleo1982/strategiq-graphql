@@ -133,6 +133,14 @@ input EvidenceArgs {
   strategicObjectiveId: Int
 }
 
+enum EvidenceEntityType {
+  correctiveAction
+  indicator
+  initiative
+  nonConformity
+  strategicObjective
+}
+
 type EvidenceList {
   nodes: [Evidence!]
   pagination: Pagination!
@@ -278,6 +286,7 @@ enum InitiativeStatus {
 type Mutation {
   createCorrectiveAction(completedAt: DateTime, description: String, dueAt: DateTime, nonConformityId: Int!, ownerId: Int, status: CorrectiveActionStatus, title: String!): CorrectiveAction
   createEffectivenessCheck(checkedAt: DateTime, correctiveActionId: Int!, notes: String, result: EffectivenessResult!): EffectivenessCheck
+  createEvidence(base64Data: String!, contentType: String!, entityId: Int!, entityType: EvidenceEntityType!, fileName: String!, label: String): Evidence
   createIndicator(description: String, formula: String, frequency: IndicatorFrequency, name: String!, ownerId: Int, targetValue: Float, unit: String): Indicator
   createIndicatorEntry(collectedAt: DateTime, indicatorId: Int!, notes: String, source: String, value: Float!): IndicatorEntry
   createInitiative(description: String, dueAt: DateTime, ownerId: Int, status: InitiativeStatus, strategicObjectiveId: Int!, title: String!): Initiative

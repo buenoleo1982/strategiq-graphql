@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql'
 import { describe, expect, it, vi } from 'vitest'
+import { createEvidence } from '@/graphql/resolvers/evidence/mutation/createEvidence'
 import { deleteEvidence } from '@/graphql/resolvers/evidence/mutation/deleteEvidence'
 import { updateEvidence } from '@/graphql/resolvers/evidence/mutation/updateEvidence'
 import { evidenceLoad } from '@/graphql/resolvers/evidence/query/evidenceLoad'
@@ -7,6 +8,7 @@ import { MinioStorageService } from '@/lib/storage/minio'
 
 vi.mock('@/lib/storage/minio', () => ({
   MinioStorageService: {
+    uploadObject: vi.fn(),
     removeObject: vi.fn(),
   },
 }))
@@ -21,6 +23,7 @@ const createContext = (
         findFirst: vi.fn(),
         findUnique: vi.fn(),
         findMany: vi.fn(),
+        create: vi.fn(),
         update: vi.fn(),
         delete: vi.fn(),
         count: vi.fn(),
@@ -219,5 +222,66 @@ describe('Evidence resolvers', () => {
       include: expect.any(Object),
     })
     expect(result?.label).toBe('Novo rótulo')
+  })
+
+  it('should create evidence from a GraphQL payload', async () => {
+    const ctx = createContext({
+      id: 1,
+      email: 'quality@example.com',
+      name: 'Quality',
+      role: 'QUALITY_MANAGER',
+    })
+
+    ctx.prisma.nonConformity = {
+      findUniqueOrThrow: vi.fn().mockResolvedValue({ id: 1 }),
+    }
+    ctx.prisma.evidence.create.mockResolvedValue({
+      id: 9,
+      fileName: 'plano.txt',
+      label: 'Plano',
+      objectKey: 'nonConformity/1/plano.txt',
+      bucketName: 'evidences',
+      contentType: 'text/plain',
+      sizeBytes: 12,
+      uploadedById: 1,
+      uploadedBy: { id: 1, name: 'Quality' },
+      updatedById: null,
+      updatedBy: null,
+      deletedById: null,
+      deletedBy: null,
+      deletedAt: null,
+      nonConformityId: 1,
+      correctiveActionId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+
+    const result = await createEvidence(
+      {},
+      {
+        entityType: 'nonConformity',
+        entityId: 1,
+        fileName: 'plano.txt',
+        contentType: 'text/plain',
+        label: 'Plano',
+        base64Data: Buffer.from('hello world').toString('base64'),
+      },
+      ctx,
+      {} as never
+    )
+
+    expect(MinioStorageService.uploadObject).toHaveBeenCalled()
+    expect(ctx.prisma.evidence.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          fileName: 'plano.txt',
+          label: 'Plano',
+          contentType: 'text/plain',
+          uploadedById: 1,
+          nonConformityId: 1,
+        }),
+      })
+    )
+    expect(result?.id).toBe(9)
   })
 })
