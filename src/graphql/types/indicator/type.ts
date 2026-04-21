@@ -1,4 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
+import { resolveIndicatorTimeline } from '@/service/timeline'
 import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 type IndicatorWithLatestEntry = {
@@ -60,6 +61,10 @@ export const Indicator = objectType({
     defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.list.nonNull.field('timeline', {
+      type: 'TimelineEvent',
+      resolve: (root, _args, ctx) => resolveIndicatorTimeline(ctx.prisma, root.id),
+    })
   },
 })
 

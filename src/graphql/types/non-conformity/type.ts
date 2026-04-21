@@ -1,4 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
+import { resolveNonConformityTimeline } from '@/service/timeline'
 import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 export const NonConformitySeverityEnum = enumType({
@@ -26,6 +27,10 @@ export const NonConformity = objectType({
     defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.list.nonNull.field('timeline', {
+      type: 'TimelineEvent',
+      resolve: (root, _args, ctx) => resolveNonConformityTimeline(ctx.prisma, root.id),
+    })
   },
 })
 

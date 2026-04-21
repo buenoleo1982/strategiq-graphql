@@ -23,6 +23,7 @@ type CorrectiveAction {
   nonConformityId: Int!
   ownerId: Int
   status: CorrectiveActionStatus!
+  timeline: [TimelineEvent!]
   title: String!
   updatedAt: DateTime!
   updatedById: Int
@@ -164,6 +165,7 @@ type Indicator {
   name: String!
   ownerId: Int
   targetValue: Float
+  timeline: [TimelineEvent!]
   unit: String
   updatedAt: DateTime!
   updatedById: Int
@@ -255,6 +257,7 @@ type Initiative {
   ownerId: Int
   status: InitiativeStatus!
   strategicObjectiveId: Int!
+  timeline: [TimelineEvent!]
   title: String!
   updatedAt: DateTime!
   updatedById: Int
@@ -342,6 +345,7 @@ type NonConformity {
   severity: NonConformitySeverity!
   source: String
   status: NonConformityStatus!
+  timeline: [TimelineEvent!]
   title: String!
   updatedAt: DateTime!
   updatedById: Int
@@ -439,6 +443,7 @@ type StrategicObjective {
   priority: StrategicObjectivePriority!
   startsAt: DateTime
   status: StrategicObjectiveStatus!
+  timeline: [TimelineEvent!]
   title: String!
   updatedAt: DateTime!
   updatedById: Int
@@ -485,6 +490,22 @@ enum StrategicObjectiveStatus {
   ARCHIVED
   COMPLETED
   DRAFT
+}
+
+type TimelineEvent {
+  actorName: String
+  description: String!
+  id: String!
+  kind: TimelineEventKind!
+  occurredAt: DateTime!
+}
+
+enum TimelineEventKind {
+  CREATED
+  EFFECTIVENESS_CHECKED
+  EVIDENCE_ADDED
+  EVIDENCE_REMOVED
+  UPDATED
 }
 
 type User {

@@ -149,6 +149,7 @@ export interface NexusGenEnums {
   StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
   StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
   StrategicObjectiveStatus: "ACTIVE" | "ARCHIVED" | "COMPLETED" | "DRAFT"
+  TimelineEventKind: "CREATED" | "EFFECTIVENESS_CHECKED" | "EVIDENCE_ADDED" | "EVIDENCE_REMOVED" | "UPDATED"
   UserOrderBy: "ID" | "NAME" | "USERNAME"
   UserRole: "ADMIN" | "ANALYST" | "MANAGER" | "QUALITY_MANAGER"
 }
@@ -308,6 +309,13 @@ export interface NexusGenObjects {
     nodes?: NexusGenRootTypes['StrategicObjective'][] | null; // [StrategicObjective!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
+  TimelineEvent: { // root type
+    actorName?: string | null; // String
+    description: string; // String!
+    id: string; // String!
+    kind: NexusGenEnums['TimelineEventKind']; // TimelineEventKind!
+    occurredAt: NexusGenScalars['DateTime']; // DateTime!
+  }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
@@ -352,6 +360,7 @@ export interface NexusGenFieldTypes {
     nonConformityId: number; // Int!
     ownerId: number | null; // Int
     status: NexusGenEnums['CorrectiveActionStatus']; // CorrectiveActionStatus!
+    timeline: NexusGenRootTypes['TimelineEvent'][] | null; // [TimelineEvent!]
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     updatedById: number | null; // Int
@@ -414,6 +423,7 @@ export interface NexusGenFieldTypes {
     name: string; // String!
     ownerId: number | null; // Int
     targetValue: number | null; // Float
+    timeline: NexusGenRootTypes['TimelineEvent'][] | null; // [TimelineEvent!]
     unit: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     updatedById: number | null; // Int
@@ -447,6 +457,7 @@ export interface NexusGenFieldTypes {
     ownerId: number | null; // Int
     status: NexusGenEnums['InitiativeStatus']; // InitiativeStatus!
     strategicObjectiveId: number; // Int!
+    timeline: NexusGenRootTypes['TimelineEvent'][] | null; // [TimelineEvent!]
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     updatedById: number | null; // Int
@@ -502,6 +513,7 @@ export interface NexusGenFieldTypes {
     severity: NexusGenEnums['NonConformitySeverity']; // NonConformitySeverity!
     source: string | null; // String
     status: NexusGenEnums['NonConformityStatus']; // NonConformityStatus!
+    timeline: NexusGenRootTypes['TimelineEvent'][] | null; // [TimelineEvent!]
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     updatedById: number | null; // Int
@@ -548,6 +560,7 @@ export interface NexusGenFieldTypes {
     priority: NexusGenEnums['StrategicObjectivePriority']; // StrategicObjectivePriority!
     startsAt: NexusGenScalars['DateTime'] | null; // DateTime
     status: NexusGenEnums['StrategicObjectiveStatus']; // StrategicObjectiveStatus!
+    timeline: NexusGenRootTypes['TimelineEvent'][] | null; // [TimelineEvent!]
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     updatedById: number | null; // Int
@@ -556,6 +569,13 @@ export interface NexusGenFieldTypes {
   StrategicObjectiveList: { // field return type
     nodes: NexusGenRootTypes['StrategicObjective'][] | null; // [StrategicObjective!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
+  TimelineEvent: { // field return type
+    actorName: string | null; // String
+    description: string; // String!
+    id: string; // String!
+    kind: NexusGenEnums['TimelineEventKind']; // TimelineEventKind!
+    occurredAt: NexusGenScalars['DateTime']; // DateTime!
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -591,6 +611,7 @@ export interface NexusGenFieldTypeNames {
     nonConformityId: 'Int'
     ownerId: 'Int'
     status: 'CorrectiveActionStatus'
+    timeline: 'TimelineEvent'
     title: 'String'
     updatedAt: 'DateTime'
     updatedById: 'Int'
@@ -653,6 +674,7 @@ export interface NexusGenFieldTypeNames {
     name: 'String'
     ownerId: 'Int'
     targetValue: 'Float'
+    timeline: 'TimelineEvent'
     unit: 'String'
     updatedAt: 'DateTime'
     updatedById: 'Int'
@@ -686,6 +708,7 @@ export interface NexusGenFieldTypeNames {
     ownerId: 'Int'
     status: 'InitiativeStatus'
     strategicObjectiveId: 'Int'
+    timeline: 'TimelineEvent'
     title: 'String'
     updatedAt: 'DateTime'
     updatedById: 'Int'
@@ -741,6 +764,7 @@ export interface NexusGenFieldTypeNames {
     severity: 'NonConformitySeverity'
     source: 'String'
     status: 'NonConformityStatus'
+    timeline: 'TimelineEvent'
     title: 'String'
     updatedAt: 'DateTime'
     updatedById: 'Int'
@@ -787,6 +811,7 @@ export interface NexusGenFieldTypeNames {
     priority: 'StrategicObjectivePriority'
     startsAt: 'DateTime'
     status: 'StrategicObjectiveStatus'
+    timeline: 'TimelineEvent'
     title: 'String'
     updatedAt: 'DateTime'
     updatedById: 'Int'
@@ -795,6 +820,13 @@ export interface NexusGenFieldTypeNames {
   StrategicObjectiveList: { // field return type name
     nodes: 'StrategicObjective'
     pagination: 'Pagination'
+  }
+  TimelineEvent: { // field return type name
+    actorName: 'String'
+    description: 'String'
+    id: 'String'
+    kind: 'TimelineEventKind'
+    occurredAt: 'DateTime'
   }
   User: { // field return type name
     createdAt: 'DateTime'

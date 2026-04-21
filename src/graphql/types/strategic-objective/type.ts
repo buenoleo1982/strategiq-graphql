@@ -1,4 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
+import { resolveStrategicObjectiveTimeline } from '@/service/timeline'
 import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 export const StrategicObjectiveStatusEnum = enumType({
@@ -25,6 +26,10 @@ export const StrategicObjective = objectType({
     defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.list.nonNull.field('timeline', {
+      type: 'TimelineEvent',
+      resolve: (root, _args, ctx) => resolveStrategicObjectiveTimeline(ctx.prisma, root.id),
+    })
   },
 })
 
