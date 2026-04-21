@@ -103,6 +103,26 @@ export interface NexusGenInputs {
     skip: number; // Int!
     take: number; // Int!
   }
+  PreventiveActionArgs: { // input type
+    id?: number | null; // Int
+    riskId?: number | null; // Int
+    status?: NexusGenEnums['PreventiveActionStatus'] | null; // PreventiveActionStatus
+  }
+  PreventiveActionOrderInput: { // input type
+    column: NexusGenEnums['PreventiveActionOrderBy']; // PreventiveActionOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
+  RiskArgs: { // input type
+    id?: number | null; // Int
+    level?: NexusGenEnums['RiskLevel'] | null; // RiskLevel
+    nonConformityId?: number | null; // Int
+    status?: NexusGenEnums['RiskStatus'] | null; // RiskStatus
+    title?: string | null; // String
+  }
+  RiskOrderInput: { // input type
+    column: NexusGenEnums['RiskOrderBy']; // RiskOrderBy!
+    direction: NexusGenEnums['OrderDirection']; // OrderDirection!
+  }
   StrategicObjectiveArgs: { // input type
     id?: number | null; // Int
     ownerId?: number | null; // Int
@@ -147,6 +167,11 @@ export interface NexusGenEnums {
   NonConformityStatus: "CLOSED" | "IN_PROGRESS" | "OPEN" | "RESOLVED"
   OperationalAlertSeverity: "CRITICAL" | "HIGH" | "MEDIUM"
   OrderDirection: "ASC" | "DESC"
+  PreventiveActionOrderBy: "CREATED_AT" | "DUE_AT" | "ID" | "RISK_ID" | "STATUS"
+  PreventiveActionStatus: "CANCELLED" | "COMPLETED" | "IN_PROGRESS" | "OPEN"
+  RiskLevel: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
+  RiskOrderBy: "CREATED_AT" | "DUE_AT" | "ID" | "NON_CONFORMITY_ID" | "STATUS" | "TITLE"
+  RiskStatus: "CLOSED" | "MITIGATED" | "MONITORING" | "OPEN"
   StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
   StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
   StrategicObjectiveStatus: "ACTIVE" | "ARCHIVED" | "COMPLETED" | "DRAFT"
@@ -301,7 +326,41 @@ export interface NexusGenObjects {
     pageSize: number; // Int!
     totalCount: number; // Int!
   }
+  PreventiveAction: { // root type
+    completedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    ownerId?: number | null; // Int
+    riskId: number; // Int!
+    status: NexusGenEnums['PreventiveActionStatus']; // PreventiveActionStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  PreventiveActionList: { // root type
+    nodes?: NexusGenRootTypes['PreventiveAction'][] | null; // [PreventiveAction!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Query: {};
+  Risk: { // root type
+    category?: string | null; // String
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    description?: string | null; // String
+    dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    impact: number; // Int!
+    nonConformityId: number; // Int!
+    ownerId?: number | null; // Int
+    probability: number; // Int!
+    status: NexusGenEnums['RiskStatus']; // RiskStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+  }
+  RiskList: { // root type
+    nodes?: NexusGenRootTypes['Risk'][] | null; // [Risk!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   StrategicObjective: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     description?: string | null; // String
@@ -484,6 +543,8 @@ export interface NexusGenFieldTypes {
     createIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     createInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
     createNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
+    createPreventiveAction: NexusGenRootTypes['PreventiveAction'] | null; // PreventiveAction
+    createRisk: NexusGenRootTypes['Risk'] | null; // Risk
     createStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     createUser: NexusGenRootTypes['User'] | null; // User
     deleteCorrectiveAction: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
@@ -493,6 +554,8 @@ export interface NexusGenFieldTypes {
     deleteIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     deleteInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
     deleteNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
+    deletePreventiveAction: NexusGenRootTypes['PreventiveAction'] | null; // PreventiveAction
+    deleteRisk: NexusGenRootTypes['Risk'] | null; // Risk
     deleteStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     deleteUser: NexusGenRootTypes['User'] | null; // User
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
@@ -507,6 +570,8 @@ export interface NexusGenFieldTypes {
     updateIndicatorEntry: NexusGenRootTypes['IndicatorEntry'] | null; // IndicatorEntry
     updateInitiative: NexusGenRootTypes['Initiative'] | null; // Initiative
     updateNonConformity: NexusGenRootTypes['NonConformity'] | null; // NonConformity
+    updatePreventiveAction: NexusGenRootTypes['PreventiveAction'] | null; // PreventiveAction
+    updateRisk: NexusGenRootTypes['Risk'] | null; // Risk
     updateStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
@@ -546,6 +611,26 @@ export interface NexusGenFieldTypes {
     pageSize: number; // Int!
     totalCount: number; // Int!
   }
+  PreventiveAction: { // field return type
+    completedAt: NexusGenScalars['DateTime'] | null; // DateTime
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
+    description: string | null; // String
+    dueAt: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    ownerId: number | null; // Int
+    riskId: number; // Int!
+    status: NexusGenEnums['PreventiveActionStatus']; // PreventiveActionStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
+  }
+  PreventiveActionList: { // field return type
+    nodes: NexusGenRootTypes['PreventiveAction'][] | null; // [PreventiveAction!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
   Query: { // field return type
     correctiveActionGet: NexusGenRootTypes['CorrectiveAction'] | null; // CorrectiveAction
     correctiveActionLoad: NexusGenRootTypes['CorrectiveActionList'] | null; // CorrectiveActionList
@@ -562,10 +647,38 @@ export interface NexusGenFieldTypes {
     nonConformityGet: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     nonConformityLoad: NexusGenRootTypes['NonConformityList'] | null; // NonConformityList
     operationalAlerts: NexusGenRootTypes['OperationalAlert'][] | null; // [OperationalAlert!]
+    preventiveActionGet: NexusGenRootTypes['PreventiveAction'] | null; // PreventiveAction
+    preventiveActionLoad: NexusGenRootTypes['PreventiveActionList'] | null; // PreventiveActionList
+    riskGet: NexusGenRootTypes['Risk'] | null; // Risk
+    riskLoad: NexusGenRootTypes['RiskList'] | null; // RiskList
     strategicObjectiveGet: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     strategicObjectiveLoad: NexusGenRootTypes['StrategicObjectiveList'] | null; // StrategicObjectiveList
     userGet: NexusGenRootTypes['User'] | null; // User
     userLoad: NexusGenRootTypes['UserList'] | null; // UserList
+  }
+  Risk: { // field return type
+    category: string | null; // String
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
+    description: string | null; // String
+    dueAt: NexusGenScalars['DateTime'] | null; // DateTime
+    id: number; // Int!
+    impact: number; // Int!
+    level: NexusGenEnums['RiskLevel']; // RiskLevel!
+    nonConformityId: number; // Int!
+    ownerId: number | null; // Int
+    probability: number; // Int!
+    score: number; // Int!
+    status: NexusGenEnums['RiskStatus']; // RiskStatus!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
+  }
+  RiskList: { // field return type
+    nodes: NexusGenRootTypes['Risk'][] | null; // [Risk!]
+    pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
   StrategicObjective: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -744,6 +857,8 @@ export interface NexusGenFieldTypeNames {
     createIndicatorEntry: 'IndicatorEntry'
     createInitiative: 'Initiative'
     createNonConformity: 'NonConformity'
+    createPreventiveAction: 'PreventiveAction'
+    createRisk: 'Risk'
     createStrategicObjective: 'StrategicObjective'
     createUser: 'User'
     deleteCorrectiveAction: 'CorrectiveAction'
@@ -753,6 +868,8 @@ export interface NexusGenFieldTypeNames {
     deleteIndicatorEntry: 'IndicatorEntry'
     deleteInitiative: 'Initiative'
     deleteNonConformity: 'NonConformity'
+    deletePreventiveAction: 'PreventiveAction'
+    deleteRisk: 'Risk'
     deleteStrategicObjective: 'StrategicObjective'
     deleteUser: 'User'
     login: 'AuthResponse'
@@ -767,6 +884,8 @@ export interface NexusGenFieldTypeNames {
     updateIndicatorEntry: 'IndicatorEntry'
     updateInitiative: 'Initiative'
     updateNonConformity: 'NonConformity'
+    updatePreventiveAction: 'PreventiveAction'
+    updateRisk: 'Risk'
     updateStrategicObjective: 'StrategicObjective'
     updateUser: 'User'
   }
@@ -806,6 +925,26 @@ export interface NexusGenFieldTypeNames {
     pageSize: 'Int'
     totalCount: 'Int'
   }
+  PreventiveAction: { // field return type name
+    completedAt: 'DateTime'
+    createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
+    description: 'String'
+    dueAt: 'DateTime'
+    id: 'Int'
+    ownerId: 'Int'
+    riskId: 'Int'
+    status: 'PreventiveActionStatus'
+    title: 'String'
+    updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
+  }
+  PreventiveActionList: { // field return type name
+    nodes: 'PreventiveAction'
+    pagination: 'Pagination'
+  }
   Query: { // field return type name
     correctiveActionGet: 'CorrectiveAction'
     correctiveActionLoad: 'CorrectiveActionList'
@@ -822,10 +961,38 @@ export interface NexusGenFieldTypeNames {
     nonConformityGet: 'NonConformity'
     nonConformityLoad: 'NonConformityList'
     operationalAlerts: 'OperationalAlert'
+    preventiveActionGet: 'PreventiveAction'
+    preventiveActionLoad: 'PreventiveActionList'
+    riskGet: 'Risk'
+    riskLoad: 'RiskList'
     strategicObjectiveGet: 'StrategicObjective'
     strategicObjectiveLoad: 'StrategicObjectiveList'
     userGet: 'User'
     userLoad: 'UserList'
+  }
+  Risk: { // field return type name
+    category: 'String'
+    createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
+    description: 'String'
+    dueAt: 'DateTime'
+    id: 'Int'
+    impact: 'Int'
+    level: 'RiskLevel'
+    nonConformityId: 'Int'
+    ownerId: 'Int'
+    probability: 'Int'
+    score: 'Int'
+    status: 'RiskStatus'
+    title: 'String'
+    updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
+  }
+  RiskList: { // field return type name
+    nodes: 'Risk'
+    pagination: 'Pagination'
   }
   StrategicObjective: { // field return type name
     createdAt: 'DateTime'
@@ -928,6 +1095,26 @@ export interface NexusGenArgTypes {
       status?: NexusGenEnums['NonConformityStatus'] | null; // NonConformityStatus
       title: string; // String!
     }
+    createPreventiveAction: { // args
+      completedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      ownerId?: number | null; // Int
+      riskId: number; // Int!
+      status?: NexusGenEnums['PreventiveActionStatus'] | null; // PreventiveActionStatus
+      title: string; // String!
+    }
+    createRisk: { // args
+      category?: string | null; // String
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      impact: number; // Int!
+      nonConformityId: number; // Int!
+      ownerId?: number | null; // Int
+      probability: number; // Int!
+      status?: NexusGenEnums['RiskStatus'] | null; // RiskStatus
+      title: string; // String!
+    }
     createStrategicObjective: { // args
       description?: string | null; // String
       endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -961,6 +1148,12 @@ export interface NexusGenArgTypes {
       id: number; // Int!
     }
     deleteNonConformity: { // args
+      id: number; // Int!
+    }
+    deletePreventiveAction: { // args
+      id: number; // Int!
+    }
+    deleteRisk: { // args
       id: number; // Int!
     }
     deleteStrategicObjective: { // args
@@ -1043,6 +1236,28 @@ export interface NexusGenArgTypes {
       status?: NexusGenEnums['NonConformityStatus'] | null; // NonConformityStatus
       title?: string | null; // String
     }
+    updatePreventiveAction: { // args
+      completedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      id: number; // Int!
+      ownerId?: number | null; // Int
+      riskId?: number | null; // Int
+      status?: NexusGenEnums['PreventiveActionStatus'] | null; // PreventiveActionStatus
+      title?: string | null; // String
+    }
+    updateRisk: { // args
+      category?: string | null; // String
+      description?: string | null; // String
+      dueAt?: NexusGenScalars['DateTime'] | null; // DateTime
+      id: number; // Int!
+      impact?: number | null; // Int
+      nonConformityId?: number | null; // Int
+      ownerId?: number | null; // Int
+      probability?: number | null; // Int
+      status?: NexusGenEnums['RiskStatus'] | null; // RiskStatus
+      title?: string | null; // String
+    }
     updateStrategicObjective: { // args
       description?: string | null; // String
       endsAt?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -1110,6 +1325,22 @@ export interface NexusGenArgTypes {
     nonConformityLoad: { // args
       filterArgs?: NexusGenInputs['NonConformityArgs'] | null; // NonConformityArgs
       order?: NexusGenInputs['NonConformityOrderInput'] | null; // NonConformityOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
+    preventiveActionGet: { // args
+      id: number; // Int!
+    }
+    preventiveActionLoad: { // args
+      filterArgs?: NexusGenInputs['PreventiveActionArgs'] | null; // PreventiveActionArgs
+      order?: NexusGenInputs['PreventiveActionOrderInput'] | null; // PreventiveActionOrderInput
+      pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
+    }
+    riskGet: { // args
+      id: number; // Int!
+    }
+    riskLoad: { // args
+      filterArgs?: NexusGenInputs['RiskArgs'] | null; // RiskArgs
+      order?: NexusGenInputs['RiskOrderInput'] | null; // RiskOrderInput
       pageArgs?: NexusGenInputs['PageArgs'] | null; // PageArgs
     }
     strategicObjectiveGet: { // args

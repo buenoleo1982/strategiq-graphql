@@ -73,6 +73,27 @@ enum EffectivenessResult {
   NEEDS_MONITORING
 }
 
+enum RiskStatus {
+  OPEN
+  MONITORING
+  MITIGATED
+  CLOSED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum PreventiveActionStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id                          Int                 @id @default(autoincrement())
   name                        String
@@ -89,6 +110,10 @@ model User {
   updatedNonConformities      NonConformity[]     @relation("NonConformityUpdatedBy")
   createdCorrectiveActions    CorrectiveAction[]  @relation("CorrectiveActionCreatedBy")
   updatedCorrectiveActions    CorrectiveAction[]  @relation("CorrectiveActionUpdatedBy")
+  createdRisks                Risk[]              @relation("RiskCreatedBy")
+  updatedRisks                Risk[]              @relation("RiskUpdatedBy")
+  createdPreventiveActions    PreventiveAction[]  @relation("PreventiveActionCreatedBy")
+  updatedPreventiveActions    PreventiveAction[]  @relation("PreventiveActionUpdatedBy")
   uploadedEvidences           Evidence[]          @relation("EvidenceUploadedBy")
   updatedEvidences            Evidence[]          @relation("EvidenceUpdatedBy")
   deletedEvidences            Evidence[]          @relation("EvidenceDeletedBy")
@@ -180,6 +205,7 @@ model NonConformity {
   updatedBy         User?                 @relation("NonConformityUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   evidences         Evidence[]
   correctiveActions CorrectiveAction[]
+  risks             Risk[]
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 }
@@ -213,6 +239,45 @@ model EffectivenessCheck {
   notes              String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
+}
+
+model Risk {
+  id               Int        @id @default(autoincrement())
+  nonConformityId  Int
+  nonConformity    NonConformity @relation(fields: [nonConformityId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  category         String?
+  probability      Int
+  impact           Int
+  status           RiskStatus @default(OPEN)
+  dueAt            DateTime?
+  ownerId          Int?
+  createdById      Int?
+  createdBy        User?      @relation("RiskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById      Int?
+  updatedBy        User?      @relation("RiskUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  preventiveActions PreventiveAction[]
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+model PreventiveAction {
+  id               Int                    @id @default(autoincrement())
+  riskId           Int
+  risk             Risk                   @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  status           PreventiveActionStatus @default(OPEN)
+  dueAt            DateTime?
+  completedAt      DateTime?
+  ownerId          Int?
+  createdById      Int?
+  createdBy        User?                  @relation("PreventiveActionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById      Int?
+  updatedBy        User?                  @relation("PreventiveActionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
 }
 
 model Evidence {

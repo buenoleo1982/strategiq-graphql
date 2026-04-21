@@ -306,6 +306,8 @@ type Mutation {
   createIndicatorEntry(collectedAt: DateTime, indicatorId: Int!, notes: String, source: String, value: Float!): IndicatorEntry
   createInitiative(description: String, dueAt: DateTime, ownerId: Int, status: InitiativeStatus, strategicObjectiveId: Int!, title: String!): Initiative
   createNonConformity(department: String, description: String, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String!): NonConformity
+  createPreventiveAction(completedAt: DateTime, description: String, dueAt: DateTime, ownerId: Int, riskId: Int!, status: PreventiveActionStatus, title: String!): PreventiveAction
+  createRisk(category: String, description: String, dueAt: DateTime, impact: Int!, nonConformityId: Int!, ownerId: Int, probability: Int!, status: RiskStatus, title: String!): Risk
   createStrategicObjective(description: String, endsAt: DateTime, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String!): StrategicObjective
   createUser(email: String!, name: String!, password: String!): User
   deleteCorrectiveAction(id: Int!): CorrectiveAction
@@ -315,6 +317,8 @@ type Mutation {
   deleteIndicatorEntry(id: Int!): IndicatorEntry
   deleteInitiative(id: Int!): Initiative
   deleteNonConformity(id: Int!): NonConformity
+  deletePreventiveAction(id: Int!): PreventiveAction
+  deleteRisk(id: Int!): Risk
   deleteStrategicObjective(id: Int!): StrategicObjective
   deleteUser(id: Int!): User
   login(email: String!, password: String!): AuthResponse!
@@ -329,6 +333,8 @@ type Mutation {
   updateIndicatorEntry(collectedAt: DateTime, id: Int!, indicatorId: Int, notes: String, source: String, value: Float): IndicatorEntry
   updateInitiative(description: String, dueAt: DateTime, id: Int!, ownerId: Int, status: InitiativeStatus, strategicObjectiveId: Int, title: String): Initiative
   updateNonConformity(department: String, description: String, id: Int!, occurredAt: DateTime, ownerId: Int, severity: NonConformitySeverity, source: String, status: NonConformityStatus, title: String): NonConformity
+  updatePreventiveAction(completedAt: DateTime, description: String, dueAt: DateTime, id: Int!, ownerId: Int, riskId: Int, status: PreventiveActionStatus, title: String): PreventiveAction
+  updateRisk(category: String, description: String, dueAt: DateTime, id: Int!, impact: Int, nonConformityId: Int, ownerId: Int, probability: Int, status: RiskStatus, title: String): Risk
   updateStrategicObjective(description: String, endsAt: DateTime, id: Int!, ownerId: Int, priority: StrategicObjectivePriority, startsAt: DateTime, status: StrategicObjectiveStatus, title: String): StrategicObjective
   updateUser(email: String, id: Int!, name: String): User
 }
@@ -426,6 +432,54 @@ type Pagination {
   totalCount: Int!
 }
 
+type PreventiveAction {
+  completedAt: DateTime
+  createdAt: DateTime!
+  createdById: Int
+  createdByName: String
+  description: String
+  dueAt: DateTime
+  id: Int!
+  ownerId: Int
+  riskId: Int!
+  status: PreventiveActionStatus!
+  title: String!
+  updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
+}
+
+input PreventiveActionArgs {
+  id: Int
+  riskId: Int
+  status: PreventiveActionStatus
+}
+
+type PreventiveActionList {
+  nodes: [PreventiveAction!]
+  pagination: Pagination!
+}
+
+enum PreventiveActionOrderBy {
+  CREATED_AT
+  DUE_AT
+  ID
+  RISK_ID
+  STATUS
+}
+
+input PreventiveActionOrderInput {
+  column: PreventiveActionOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum PreventiveActionStatus {
+  CANCELLED
+  COMPLETED
+  IN_PROGRESS
+  OPEN
+}
+
 type Query {
   correctiveActionGet(id: Int!): CorrectiveAction
   correctiveActionLoad(filterArgs: CorrectiveActionArgs, order: CorrectiveActionOrderInput, pageArgs: PageArgs): CorrectiveActionList
@@ -442,10 +496,76 @@ type Query {
   nonConformityGet(id: Int!): NonConformity
   nonConformityLoad(filterArgs: NonConformityArgs, order: NonConformityOrderInput, pageArgs: PageArgs): NonConformityList
   operationalAlerts: [OperationalAlert!]
+  preventiveActionGet(id: Int!): PreventiveAction
+  preventiveActionLoad(filterArgs: PreventiveActionArgs, order: PreventiveActionOrderInput, pageArgs: PageArgs): PreventiveActionList
+  riskGet(id: Int!): Risk
+  riskLoad(filterArgs: RiskArgs, order: RiskOrderInput, pageArgs: PageArgs): RiskList
   strategicObjectiveGet(id: Int!): StrategicObjective
   strategicObjectiveLoad(filterArgs: StrategicObjectiveArgs, order: StrategicObjectiveOrderInput, pageArgs: PageArgs): StrategicObjectiveList
   userGet(id: Int!): User
   userLoad(filterArgs: UserArgs, order: UserOrderInput, pageArgs: PageArgs): UserList
+}
+
+type Risk {
+  category: String
+  createdAt: DateTime!
+  createdById: Int
+  createdByName: String
+  description: String
+  dueAt: DateTime
+  id: Int!
+  impact: Int!
+  level: RiskLevel!
+  nonConformityId: Int!
+  ownerId: Int
+  probability: Int!
+  score: Int!
+  status: RiskStatus!
+  title: String!
+  updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
+}
+
+input RiskArgs {
+  id: Int
+  level: RiskLevel
+  nonConformityId: Int
+  status: RiskStatus
+  title: String
+}
+
+enum RiskLevel {
+  CRITICAL
+  HIGH
+  LOW
+  MEDIUM
+}
+
+type RiskList {
+  nodes: [Risk!]
+  pagination: Pagination!
+}
+
+enum RiskOrderBy {
+  CREATED_AT
+  DUE_AT
+  ID
+  NON_CONFORMITY_ID
+  STATUS
+  TITLE
+}
+
+input RiskOrderInput {
+  column: RiskOrderBy!
+  direction: OrderDirection! = ASC
+}
+
+enum RiskStatus {
+  CLOSED
+  MITIGATED
+  MONITORING
+  OPEN
 }
 
 type StrategicObjective {
