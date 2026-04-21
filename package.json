@@ -19,6 +19,7 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "prisma db seed",
+    "e2e:setup": "bun prisma/seed/e2e.ts",
     "schema:generate": "NEXUS_SHOULD_GENERATE_ARTIFACTS=true NODE_ENV=development bun src/graphql/schema.ts",
     "lint": "biome check --write .",
     "lint:unsafe": "biome check --write --unsafe .",
