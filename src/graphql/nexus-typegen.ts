@@ -145,6 +145,7 @@ export interface NexusGenEnums {
   NonConformityOrderBy: "CREATED_AT" | "ID" | "OCCURRED_AT" | "SEVERITY" | "STATUS" | "TITLE"
   NonConformitySeverity: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
   NonConformityStatus: "CLOSED" | "IN_PROGRESS" | "OPEN" | "RESOLVED"
+  OperationalAlertSeverity: "CRITICAL" | "HIGH" | "MEDIUM"
   OrderDirection: "ASC" | "DESC"
   StrategicObjectiveOrderBy: "CREATED_AT" | "ENDS_AT" | "ID" | "PRIORITY" | "STARTS_AT" | "STATUS" | "TITLE"
   StrategicObjectivePriority: "CRITICAL" | "HIGH" | "LOW" | "MEDIUM"
@@ -285,6 +286,14 @@ export interface NexusGenObjects {
   NonConformityList: { // root type
     nodes?: NexusGenRootTypes['NonConformity'][] | null; // [NonConformity!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
+  }
+  OperationalAlert: { // root type
+    description: string; // String!
+    href: string; // String!
+    id: string; // String!
+    occurredAt: NexusGenScalars['DateTime']; // DateTime!
+    severity: NexusGenEnums['OperationalAlertSeverity']; // OperationalAlertSeverity!
+    title: string; // String!
   }
   Pagination: { // root type
     hasMore: boolean; // Boolean!
@@ -523,6 +532,14 @@ export interface NexusGenFieldTypes {
     nodes: NexusGenRootTypes['NonConformity'][] | null; // [NonConformity!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
   }
+  OperationalAlert: { // field return type
+    description: string; // String!
+    href: string; // String!
+    id: string; // String!
+    occurredAt: NexusGenScalars['DateTime']; // DateTime!
+    severity: NexusGenEnums['OperationalAlertSeverity']; // OperationalAlertSeverity!
+    title: string; // String!
+  }
   Pagination: { // field return type
     hasMore: boolean; // Boolean!
     page: number; // Int!
@@ -544,6 +561,7 @@ export interface NexusGenFieldTypes {
     me: NexusGenRootTypes['User'] | null; // User
     nonConformityGet: NexusGenRootTypes['NonConformity'] | null; // NonConformity
     nonConformityLoad: NexusGenRootTypes['NonConformityList'] | null; // NonConformityList
+    operationalAlerts: NexusGenRootTypes['OperationalAlert'][] | null; // [OperationalAlert!]
     strategicObjectiveGet: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     strategicObjectiveLoad: NexusGenRootTypes['StrategicObjectiveList'] | null; // StrategicObjectiveList
     userGet: NexusGenRootTypes['User'] | null; // User
@@ -774,6 +792,14 @@ export interface NexusGenFieldTypeNames {
     nodes: 'NonConformity'
     pagination: 'Pagination'
   }
+  OperationalAlert: { // field return type name
+    description: 'String'
+    href: 'String'
+    id: 'String'
+    occurredAt: 'DateTime'
+    severity: 'OperationalAlertSeverity'
+    title: 'String'
+  }
   Pagination: { // field return type name
     hasMore: 'Boolean'
     page: 'Int'
@@ -795,6 +821,7 @@ export interface NexusGenFieldTypeNames {
     me: 'User'
     nonConformityGet: 'NonConformity'
     nonConformityLoad: 'NonConformityList'
+    operationalAlerts: 'OperationalAlert'
     strategicObjectiveGet: 'StrategicObjective'
     strategicObjectiveLoad: 'StrategicObjectiveList'
     userGet: 'User'

@@ -394,6 +394,21 @@ enum NonConformityStatus {
   RESOLVED
 }
 
+type OperationalAlert {
+  description: String!
+  href: String!
+  id: String!
+  occurredAt: DateTime!
+  severity: OperationalAlertSeverity!
+  title: String!
+}
+
+enum OperationalAlertSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+}
+
 enum OrderDirection {
   ASC
   DESC
@@ -426,6 +441,7 @@ type Query {
   me: User
   nonConformityGet(id: Int!): NonConformity
   nonConformityLoad(filterArgs: NonConformityArgs, order: NonConformityOrderInput, pageArgs: PageArgs): NonConformityList
+  operationalAlerts: [OperationalAlert!]
   strategicObjectiveGet(id: Int!): StrategicObjective
   strategicObjectiveLoad(filterArgs: StrategicObjectiveArgs, order: StrategicObjectiveOrderInput, pageArgs: PageArgs): StrategicObjectiveList
   userGet(id: Int!): User
