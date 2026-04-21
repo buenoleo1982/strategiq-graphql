@@ -17,6 +17,11 @@ export const createStrategicObjective: FieldResolver<'Mutation', 'createStrategi
       startsAt: args.startsAt,
       endsAt: args.endsAt,
       ownerId: args.ownerId,
+      createdById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
     },
   })
 }

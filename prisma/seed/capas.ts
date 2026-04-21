@@ -23,6 +23,8 @@ export async function seedCapas(prisma: PrismaClient) {
         status: 'IN_PROGRESS',
         dueAt: new Date('2026-04-25T18:00:00.000Z'),
         ownerId: qualityManager?.id ?? null,
+        createdById: qualityManager?.id ?? null,
+        updatedById: qualityManager?.id ?? null,
       },
       {
         nonConformityId: nonConformities[1]?.id ?? 1,
@@ -32,6 +34,8 @@ export async function seedCapas(prisma: PrismaClient) {
         dueAt: new Date('2026-04-20T18:00:00.000Z'),
         completedAt: new Date('2026-04-18T16:00:00.000Z'),
         ownerId: qualityManager?.id ?? null,
+        createdById: qualityManager?.id ?? null,
+        updatedById: qualityManager?.id ?? null,
       },
     ],
   })

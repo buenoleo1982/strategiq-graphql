@@ -14,6 +14,11 @@ export const createNonConformity: FieldResolver<'Mutation', 'createNonConformity
       department: args.department,
       occurredAt: args.occurredAt,
       ownerId: args.ownerId,
+      createdById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
     },
   })
 }

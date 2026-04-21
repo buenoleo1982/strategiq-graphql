@@ -1,5 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
-import { OrderDirection, Pagination } from '../utils'
+import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 type IndicatorWithLatestEntry = {
   targetValue?: number | null
@@ -57,6 +57,7 @@ export const Indicator = objectType({
         return latestEntry.value >= indicatorWithLatestEntry.targetValue ? 'ON_TARGET' : 'BELOW_TARGET'
       },
     })
+    defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

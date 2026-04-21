@@ -15,6 +15,11 @@ export const updateNonConformity: FieldResolver<'Mutation', 'updateNonConformity
       department: args.department ?? undefined,
       occurredAt: args.occurredAt ?? undefined,
       ownerId: args.ownerId ?? undefined,
+      updatedById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
     },
   })
 }

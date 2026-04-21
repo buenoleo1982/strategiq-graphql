@@ -14,6 +14,11 @@ export const updateCorrectiveAction: FieldResolver<'Mutation', 'updateCorrective
       dueAt: args.dueAt ?? undefined,
       completedAt: args.completedAt ?? undefined,
       ownerId: args.ownerId ?? undefined,
+      updatedById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
     },
   })
 }

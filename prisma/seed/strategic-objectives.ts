@@ -15,6 +15,8 @@ export async function seedStrategicObjectives(prisma: PrismaClient) {
         status: 'ACTIVE',
         priority: 'HIGH',
         ownerId: admin?.id ?? null,
+        createdById: admin?.id ?? null,
+        updatedById: admin?.id ?? null,
       },
       {
         title: 'Reduzir tempo de resposta para nao conformidades',
@@ -22,6 +24,8 @@ export async function seedStrategicObjectives(prisma: PrismaClient) {
         status: 'DRAFT',
         priority: 'MEDIUM',
         ownerId: admin?.id ?? null,
+        createdById: admin?.id ?? null,
+        updatedById: admin?.id ?? null,
       },
     ],
   })

@@ -1,5 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
-import { OrderDirection, Pagination } from '../utils'
+import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 export const InitiativeStatusEnum = enumType({
   name: 'InitiativeStatus',
@@ -16,6 +16,7 @@ export const Initiative = objectType({
     t.nonNull.field('status', { type: InitiativeStatusEnum })
     t.field('dueAt', { type: 'DateTime' })
     t.int('ownerId')
+    defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

@@ -7,6 +7,8 @@ export const indicatorGet: FieldResolver<'Query', 'indicatorGet'> = async (_, ar
   return ctx.prisma.indicator.findUnique({
     where: { id: args.id },
     include: {
+      createdBy: true,
+      updatedBy: true,
       entries: {
         orderBy: {
           collectedAt: 'desc',

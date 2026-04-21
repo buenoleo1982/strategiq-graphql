@@ -23,6 +23,8 @@ export async function seedInitiatives(prisma: PrismaClient) {
         status: 'IN_PROGRESS',
         dueAt: new Date('2026-05-15T18:00:00.000Z'),
         ownerId: manager?.id ?? null,
+        createdById: manager?.id ?? null,
+        updatedById: manager?.id ?? null,
       },
       {
         strategicObjectiveId: objectives[1]?.id ?? 1,
@@ -31,6 +33,8 @@ export async function seedInitiatives(prisma: PrismaClient) {
         status: 'PLANNED',
         dueAt: new Date('2026-05-08T18:00:00.000Z'),
         ownerId: manager?.id ?? null,
+        createdById: manager?.id ?? null,
+        updatedById: manager?.id ?? null,
       },
     ],
   })

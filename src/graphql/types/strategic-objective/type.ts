@@ -1,5 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
-import { OrderDirection, Pagination } from '../utils'
+import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 export const StrategicObjectiveStatusEnum = enumType({
   name: 'StrategicObjectiveStatus',
@@ -22,6 +22,7 @@ export const StrategicObjective = objectType({
     t.field('startsAt', { type: 'DateTime' })
     t.field('endsAt', { type: 'DateTime' })
     t.int('ownerId')
+    defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

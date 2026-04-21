@@ -1,5 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
-import { OrderDirection, Pagination } from '../utils'
+import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 export const CorrectiveActionStatusEnum = enumType({
   name: 'CorrectiveActionStatus',
@@ -22,6 +22,7 @@ export const CorrectiveAction = objectType({
     t.field('dueAt', { type: 'DateTime' })
     t.field('completedAt', { type: 'DateTime' })
     t.int('ownerId')
+    defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

@@ -17,6 +17,8 @@ export async function seedIndicators(prisma: PrismaClient) {
         targetValue: 5,
         frequency: 'MONTHLY',
         ownerId: admin?.id ?? null,
+        createdById: admin?.id ?? null,
+        updatedById: admin?.id ?? null,
       },
       {
         name: 'Conformidade de evidências por processo',
@@ -26,6 +28,8 @@ export async function seedIndicators(prisma: PrismaClient) {
         targetValue: 95,
         frequency: 'MONTHLY',
         ownerId: admin?.id ?? null,
+        createdById: admin?.id ?? null,
+        updatedById: admin?.id ?? null,
       },
     ],
   })

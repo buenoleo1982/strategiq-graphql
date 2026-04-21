@@ -1,5 +1,5 @@
 import { enumType, inputObjectType, objectType } from 'nexus'
-import { OrderDirection, Pagination } from '../utils'
+import { defineAuditFields, OrderDirection, Pagination } from '../utils'
 
 export const NonConformitySeverityEnum = enumType({
   name: 'NonConformitySeverity',
@@ -23,6 +23,7 @@ export const NonConformity = objectType({
     t.string('department')
     t.field('occurredAt', { type: 'DateTime' })
     t.int('ownerId')
+    defineAuditFields(t)
     t.nonNull.field('createdAt', { type: 'DateTime' })
     t.nonNull.field('updatedAt', { type: 'DateTime' })
   },

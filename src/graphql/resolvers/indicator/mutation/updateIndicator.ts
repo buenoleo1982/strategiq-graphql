@@ -17,6 +17,15 @@ export const updateIndicator: FieldResolver<'Mutation', 'updateIndicator'> = asy
         ...(args.targetValue !== undefined ? { targetValue: args.targetValue } : {}),
         ...(args.frequency ? { frequency: args.frequency } : {}),
         ...(args.ownerId !== undefined ? { ownerId: args.ownerId } : {}),
+        updatedById: ctx.currentUser.id,
+      },
+      include: {
+        createdBy: true,
+        updatedBy: true,
+        entries: {
+          orderBy: { collectedAt: 'desc' },
+          take: 1,
+        },
       },
     })
   } catch {

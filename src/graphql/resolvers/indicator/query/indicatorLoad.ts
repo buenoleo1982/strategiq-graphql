@@ -50,6 +50,8 @@ export const indicatorLoad: FieldResolver<'Query', 'indicatorLoad'> = async (_, 
     take: pagination.pageSize,
     orderBy: getOrderBy(args.order?.column, args.order?.direction),
     include: {
+      createdBy: true,
+      updatedBy: true,
       entries: {
         orderBy: {
           collectedAt: 'desc',

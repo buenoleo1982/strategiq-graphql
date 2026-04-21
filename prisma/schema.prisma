@@ -74,16 +74,26 @@ enum EffectivenessResult {
 }
 
 model User {
-  id                Int        @id @default(autoincrement())
-  name              String
-  email             String     @unique
-  password          String
-  role              UserRole   @default(ANALYST)
-  uploadedEvidences Evidence[] @relation("EvidenceUploadedBy")
-  updatedEvidences  Evidence[] @relation("EvidenceUpdatedBy")
-  deletedEvidences  Evidence[] @relation("EvidenceDeletedBy")
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  id                          Int                 @id @default(autoincrement())
+  name                        String
+  email                       String              @unique
+  password                    String
+  role                        UserRole            @default(ANALYST)
+  createdStrategicObjectives  StrategicObjective[] @relation("StrategicObjectiveCreatedBy")
+  updatedStrategicObjectives  StrategicObjective[] @relation("StrategicObjectiveUpdatedBy")
+  createdInitiatives          Initiative[]        @relation("InitiativeCreatedBy")
+  updatedInitiatives          Initiative[]        @relation("InitiativeUpdatedBy")
+  createdIndicators           Indicator[]         @relation("IndicatorCreatedBy")
+  updatedIndicators           Indicator[]         @relation("IndicatorUpdatedBy")
+  createdNonConformities      NonConformity[]     @relation("NonConformityCreatedBy")
+  updatedNonConformities      NonConformity[]     @relation("NonConformityUpdatedBy")
+  createdCorrectiveActions    CorrectiveAction[]  @relation("CorrectiveActionCreatedBy")
+  updatedCorrectiveActions    CorrectiveAction[]  @relation("CorrectiveActionUpdatedBy")
+  uploadedEvidences           Evidence[]          @relation("EvidenceUploadedBy")
+  updatedEvidences            Evidence[]          @relation("EvidenceUpdatedBy")
+  deletedEvidences            Evidence[]          @relation("EvidenceDeletedBy")
+  createdAt                   DateTime            @default(now())
+  updatedAt                   DateTime            @updatedAt
 }
 
 model StrategicObjective {
@@ -95,6 +105,10 @@ model StrategicObjective {
   startsAt    DateTime?
   endsAt      DateTime?
   ownerId     Int?
+  createdById Int?
+  createdBy   User?                      @relation("StrategicObjectiveCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById Int?
+  updatedBy   User?                      @relation("StrategicObjectiveUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   initiatives Initiative[]
   evidences   Evidence[]
   createdAt   DateTime                   @default(now())
@@ -110,6 +124,10 @@ model Initiative {
   status               InitiativeStatus   @default(PLANNED)
   dueAt                DateTime?
   ownerId              Int?
+  createdById          Int?
+  createdBy            User?              @relation("InitiativeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById          Int?
+  updatedBy            User?              @relation("InitiativeUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   evidences            Evidence[]
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
@@ -124,6 +142,10 @@ model Indicator {
   targetValue Float?
   frequency   IndicatorFrequency @default(MONTHLY)
   ownerId     Int?
+  createdById Int?
+  createdBy   User?              @relation("IndicatorCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById Int?
+  updatedBy   User?              @relation("IndicatorUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   entries     IndicatorEntry[]
   evidences   Evidence[]
   createdAt   DateTime           @default(now())
@@ -152,6 +174,10 @@ model NonConformity {
   department        String?
   occurredAt        DateTime?
   ownerId           Int?
+  createdById       Int?
+  createdBy         User?                 @relation("NonConformityCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById       Int?
+  updatedBy         User?                 @relation("NonConformityUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   evidences         Evidence[]
   correctiveActions CorrectiveAction[]
   createdAt         DateTime              @default(now())
@@ -168,6 +194,10 @@ model CorrectiveAction {
   dueAt               DateTime?
   completedAt         DateTime?
   ownerId             Int?
+  createdById         Int?
+  createdBy           User?                 @relation("CorrectiveActionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedById         Int?
+  updatedBy           User?                 @relation("CorrectiveActionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   evidences           Evidence[]
   effectivenessChecks EffectivenessCheck[]
   createdAt           DateTime               @default(now())

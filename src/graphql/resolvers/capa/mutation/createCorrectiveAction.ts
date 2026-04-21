@@ -13,6 +13,11 @@ export const createCorrectiveAction: FieldResolver<'Mutation', 'createCorrective
       dueAt: args.dueAt,
       completedAt: args.completedAt,
       ownerId: args.ownerId,
+      createdById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
     },
   })
 }

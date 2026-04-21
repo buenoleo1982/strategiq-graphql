@@ -18,6 +18,8 @@ export async function seedNonConformities(prisma: PrismaClient) {
         department: 'Internação',
         occurredAt: new Date('2026-04-10T09:00:00.000Z'),
         ownerId: qualityManager?.id ?? null,
+        createdById: qualityManager?.id ?? null,
+        updatedById: qualityManager?.id ?? null,
       },
       {
         title: 'Tempo acima da meta na tratativa de não conformidades',
@@ -28,6 +30,8 @@ export async function seedNonConformities(prisma: PrismaClient) {
         department: 'Qualidade',
         occurredAt: new Date('2026-04-14T14:30:00.000Z'),
         ownerId: qualityManager?.id ?? null,
+        createdById: qualityManager?.id ?? null,
+        updatedById: qualityManager?.id ?? null,
       },
     ],
   })

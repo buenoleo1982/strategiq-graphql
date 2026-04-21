@@ -344,6 +344,8 @@ export interface NexusGenFieldTypes {
   CorrectiveAction: { // field return type
     completedAt: NexusGenScalars['DateTime'] | null; // DateTime
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
     description: string | null; // String
     dueAt: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -352,6 +354,8 @@ export interface NexusGenFieldTypes {
     status: NexusGenEnums['CorrectiveActionStatus']; // CorrectiveActionStatus!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
   }
   CorrectiveActionList: { // field return type
     nodes: NexusGenRootTypes['CorrectiveAction'][] | null; // [CorrectiveAction!]
@@ -398,6 +402,8 @@ export interface NexusGenFieldTypes {
   }
   Indicator: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
     description: string | null; // String
     formula: string | null; // String
     frequency: NexusGenEnums['IndicatorFrequency']; // IndicatorFrequency!
@@ -410,6 +416,8 @@ export interface NexusGenFieldTypes {
     targetValue: number | null; // Float
     unit: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
   }
   IndicatorEntry: { // field return type
     collectedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -431,6 +439,8 @@ export interface NexusGenFieldTypes {
   }
   Initiative: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
     description: string | null; // String
     dueAt: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -439,6 +449,8 @@ export interface NexusGenFieldTypes {
     strategicObjectiveId: number; // Int!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
   }
   InitiativeList: { // field return type
     nodes: NexusGenRootTypes['Initiative'][] | null; // [Initiative!]
@@ -480,6 +492,8 @@ export interface NexusGenFieldTypes {
   }
   NonConformity: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
     department: string | null; // String
     description: string | null; // String
     id: number; // Int!
@@ -490,6 +504,8 @@ export interface NexusGenFieldTypes {
     status: NexusGenEnums['NonConformityStatus']; // NonConformityStatus!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
   }
   NonConformityList: { // field return type
     nodes: NexusGenRootTypes['NonConformity'][] | null; // [NonConformity!]
@@ -523,6 +539,8 @@ export interface NexusGenFieldTypes {
   }
   StrategicObjective: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
+    createdById: number | null; // Int
+    createdByName: string | null; // String
     description: string | null; // String
     endsAt: NexusGenScalars['DateTime'] | null; // DateTime
     id: number; // Int!
@@ -532,6 +550,8 @@ export interface NexusGenFieldTypes {
     status: NexusGenEnums['StrategicObjectiveStatus']; // StrategicObjectiveStatus!
     title: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    updatedById: number | null; // Int
+    updatedByName: string | null; // String
   }
   StrategicObjectiveList: { // field return type
     nodes: NexusGenRootTypes['StrategicObjective'][] | null; // [StrategicObjective!]
@@ -563,6 +583,8 @@ export interface NexusGenFieldTypeNames {
   CorrectiveAction: { // field return type name
     completedAt: 'DateTime'
     createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
     description: 'String'
     dueAt: 'DateTime'
     id: 'Int'
@@ -571,6 +593,8 @@ export interface NexusGenFieldTypeNames {
     status: 'CorrectiveActionStatus'
     title: 'String'
     updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
   }
   CorrectiveActionList: { // field return type name
     nodes: 'CorrectiveAction'
@@ -617,6 +641,8 @@ export interface NexusGenFieldTypeNames {
   }
   Indicator: { // field return type name
     createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
     description: 'String'
     formula: 'String'
     frequency: 'IndicatorFrequency'
@@ -629,6 +655,8 @@ export interface NexusGenFieldTypeNames {
     targetValue: 'Float'
     unit: 'String'
     updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
   }
   IndicatorEntry: { // field return type name
     collectedAt: 'DateTime'
@@ -650,6 +678,8 @@ export interface NexusGenFieldTypeNames {
   }
   Initiative: { // field return type name
     createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
     description: 'String'
     dueAt: 'DateTime'
     id: 'Int'
@@ -658,6 +688,8 @@ export interface NexusGenFieldTypeNames {
     strategicObjectiveId: 'Int'
     title: 'String'
     updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
   }
   InitiativeList: { // field return type name
     nodes: 'Initiative'
@@ -699,6 +731,8 @@ export interface NexusGenFieldTypeNames {
   }
   NonConformity: { // field return type name
     createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
     department: 'String'
     description: 'String'
     id: 'Int'
@@ -709,6 +743,8 @@ export interface NexusGenFieldTypeNames {
     status: 'NonConformityStatus'
     title: 'String'
     updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
   }
   NonConformityList: { // field return type name
     nodes: 'NonConformity'
@@ -742,6 +778,8 @@ export interface NexusGenFieldTypeNames {
   }
   StrategicObjective: { // field return type name
     createdAt: 'DateTime'
+    createdById: 'Int'
+    createdByName: 'String'
     description: 'String'
     endsAt: 'DateTime'
     id: 'Int'
@@ -751,6 +789,8 @@ export interface NexusGenFieldTypeNames {
     status: 'StrategicObjectiveStatus'
     title: 'String'
     updatedAt: 'DateTime'
+    updatedById: 'Int'
+    updatedByName: 'String'
   }
   StrategicObjectiveList: { // field return type name
     nodes: 'StrategicObjective'

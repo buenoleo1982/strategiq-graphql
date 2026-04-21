@@ -21,6 +21,11 @@ export const updateStrategicObjective: FieldResolver<'Mutation', 'updateStrategi
         ...(args.startsAt !== undefined ? { startsAt: args.startsAt } : {}),
         ...(args.endsAt !== undefined ? { endsAt: args.endsAt } : {}),
         ...(args.ownerId !== undefined ? { ownerId: args.ownerId } : {}),
+        updatedById: ctx.currentUser.id,
+      },
+      include: {
+        createdBy: true,
+        updatedBy: true,
       },
     })
   } catch {

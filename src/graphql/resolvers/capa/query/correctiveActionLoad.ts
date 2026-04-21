@@ -42,6 +42,10 @@ export const correctiveActionLoad: FieldResolver<'Query', 'correctiveActionLoad'
     skip: (pagination.page - 1) * pagination.pageSize,
     take: pagination.pageSize,
     orderBy: getOrderBy(args.order?.column, args.order?.direction),
+    include: {
+      createdBy: true,
+      updatedBy: true,
+    },
   })
 
   return { nodes, pagination }

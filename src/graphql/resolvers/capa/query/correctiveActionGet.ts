@@ -6,5 +6,9 @@ export const correctiveActionGet: FieldResolver<'Query', 'correctiveActionGet'> 
 
   return ctx.prisma.correctiveAction.findUnique({
     where: { id: args.id },
+    include: {
+      createdBy: true,
+      updatedBy: true,
+    },
   })
 }

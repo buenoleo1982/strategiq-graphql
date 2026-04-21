@@ -10,5 +10,9 @@ export const strategicObjectiveGet: FieldResolver<'Query', 'strategicObjectiveGe
 
   return ctx.prisma.strategicObjective.findUnique({
     where: { id: args.id },
+    include: {
+      createdBy: true,
+      updatedBy: true,
+    },
   })
 }

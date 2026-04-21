@@ -12,6 +12,11 @@ export const createInitiative: FieldResolver<'Mutation', 'createInitiative'> = a
       status: args.status ?? 'PLANNED',
       dueAt: args.dueAt,
       ownerId: args.ownerId,
+      createdById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
     },
   })
 }

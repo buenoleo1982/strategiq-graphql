@@ -15,6 +15,8 @@ type AuthTokens {
 type CorrectiveAction {
   completedAt: DateTime
   createdAt: DateTime!
+  createdById: Int
+  createdByName: String
   description: String
   dueAt: DateTime
   id: Int!
@@ -23,6 +25,8 @@ type CorrectiveAction {
   status: CorrectiveActionStatus!
   title: String!
   updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
 }
 
 input CorrectiveActionArgs {
@@ -148,6 +152,8 @@ type EvidenceList {
 
 type Indicator {
   createdAt: DateTime!
+  createdById: Int
+  createdByName: String
   description: String
   formula: String
   frequency: IndicatorFrequency!
@@ -160,6 +166,8 @@ type Indicator {
   targetValue: Float
   unit: String
   updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
 }
 
 input IndicatorArgs {
@@ -239,6 +247,8 @@ enum IndicatorTargetStatus {
 
 type Initiative {
   createdAt: DateTime!
+  createdById: Int
+  createdByName: String
   description: String
   dueAt: DateTime
   id: Int!
@@ -247,6 +257,8 @@ type Initiative {
   strategicObjectiveId: Int!
   title: String!
   updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
 }
 
 input InitiativeArgs {
@@ -320,6 +332,8 @@ type Mutation {
 
 type NonConformity {
   createdAt: DateTime!
+  createdById: Int
+  createdByName: String
   department: String
   description: String
   id: Int!
@@ -330,6 +344,8 @@ type NonConformity {
   status: NonConformityStatus!
   title: String!
   updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
 }
 
 input NonConformityArgs {
@@ -414,6 +430,8 @@ type Query {
 
 type StrategicObjective {
   createdAt: DateTime!
+  createdById: Int
+  createdByName: String
   description: String
   endsAt: DateTime
   id: Int!
@@ -423,6 +441,8 @@ type StrategicObjective {
   status: StrategicObjectiveStatus!
   title: String!
   updatedAt: DateTime!
+  updatedById: Int
+  updatedByName: String
 }
 
 input StrategicObjectiveArgs {

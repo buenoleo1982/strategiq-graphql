@@ -20,7 +20,14 @@ export const updateInitiative: FieldResolver<'Mutation', 'updateInitiative'> = a
 
     return await ctx.prisma.initiative.update({
       where: { id: args.id },
-      data,
+      data: {
+        ...data,
+        updatedById: ctx.currentUser.id,
+      },
+      include: {
+        createdBy: true,
+        updatedBy: true,
+      },
     })
   } catch {
     return null

@@ -10,5 +10,9 @@ export const initiativeGet: FieldResolver<'Query', 'initiativeGet'> = async (_, 
 
   return ctx.prisma.initiative.findUnique({
     where: { id: args.id },
+    include: {
+      createdBy: true,
+      updatedBy: true,
+    },
   })
 }

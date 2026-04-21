@@ -13,6 +13,15 @@ export const createIndicator: FieldResolver<'Mutation', 'createIndicator'> = asy
       targetValue: args.targetValue,
       frequency: args.frequency ?? 'MONTHLY',
       ownerId: args.ownerId,
+      createdById: ctx.currentUser.id,
+    },
+    include: {
+      createdBy: true,
+      updatedBy: true,
+      entries: {
+        orderBy: { collectedAt: 'desc' },
+        take: 1,
+      },
     },
   })
 }

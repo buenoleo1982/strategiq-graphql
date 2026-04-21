@@ -7,7 +7,9 @@ import type { UserRole } from '@/types/auth'
  * Guard que verifica se o usuário está autenticado
  * @throws GraphQLError se o usuário não estiver autenticado
  */
-export function requireAuth(ctx: Context): void {
+export function requireAuth(
+  ctx: Context
+): asserts ctx is Context & { currentUser: NonNullable<Context['currentUser']> } {
   if (!ctx.currentUser) {
     throw new GraphQLError('Você precisa estar autenticado para acessar este recurso', {
       extensions: { code: 'UNAUTHENTICATED' },

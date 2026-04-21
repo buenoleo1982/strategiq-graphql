@@ -6,5 +6,9 @@ export const nonConformityGet: FieldResolver<'Query', 'nonConformityGet'> = asyn
 
   return ctx.prisma.nonConformity.findUnique({
     where: { id: args.id },
+    include: {
+      createdBy: true,
+      updatedBy: true,
+    },
   })
 }

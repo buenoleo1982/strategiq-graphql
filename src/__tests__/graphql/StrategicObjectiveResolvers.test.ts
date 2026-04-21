@@ -71,7 +71,15 @@ describe('StrategicObjective resolvers', () => {
       {} as never
     )
 
-    expect(ctx.prisma.strategicObjective.create).toHaveBeenCalled()
+    expect(ctx.prisma.strategicObjective.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({
+        title: 'Expand quality program',
+        status: 'ACTIVE',
+        priority: 'HIGH',
+        ownerId: 1,
+        createdById: 1,
+      }),
+    }))
     expect(result).toMatchObject({
       title: 'Expand quality program',
       status: 'ACTIVE',
@@ -192,6 +200,14 @@ describe('StrategicObjective resolvers', () => {
       {} as never
     )
 
+    expect(ctx.prisma.strategicObjective.update).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: 1 },
+      data: expect.objectContaining({
+        title: 'Updated objective',
+        status: 'COMPLETED',
+        updatedById: 1,
+      }),
+    }))
     if (!result) {
       throw new Error('Expected updateStrategicObjective result')
     }
