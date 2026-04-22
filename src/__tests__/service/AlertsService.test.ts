@@ -46,6 +46,33 @@ describe('Alerts service', () => {
           },
         ]),
       },
+      risk: {
+        findMany: vi.fn().mockResolvedValue([
+          {
+            id: 14,
+            nonConformityId: 8,
+            title: 'Risco de recorrência crítica',
+            probability: 5,
+            impact: 5,
+            status: 'OPEN',
+            updatedAt: new Date('2026-04-21T06:00:00.000Z'),
+          },
+        ]),
+      },
+      preventiveAction: {
+        findMany: vi.fn().mockResolvedValue([
+          {
+            id: 22,
+            title: 'Padronizar barreira preventiva',
+            status: 'IN_PROGRESS',
+            dueAt: new Date('2026-04-19T10:00:00.000Z'),
+            updatedAt: new Date('2026-04-21T05:00:00.000Z'),
+            risk: {
+              nonConformityId: 8,
+            },
+          },
+        ]),
+      },
     } as any
 
     const alerts = await resolveOperationalAlerts(prisma)
@@ -53,6 +80,8 @@ describe('Alerts service', () => {
     expect(alerts.map(alert => alert.id)).toEqual([
       'corrective-action-overdue-11',
       'indicator-below-target-4',
+      'risk-critical-14',
+      'preventive-action-overdue-22',
       'non-conformity-open-8',
       'corrective-action-no-check-12',
     ])
@@ -63,6 +92,10 @@ describe('Alerts service', () => {
     expect(alerts[1]).toMatchObject({
       severity: 'HIGH',
       href: '/indicators/4/entries',
+    })
+    expect(alerts[2]).toMatchObject({
+      severity: 'HIGH',
+      href: '/non-conformities/8/risks',
     })
   })
 })

@@ -1,4 +1,5 @@
 import type { PrismaClient } from '@prisma/client'
+import { calculateRiskLevel } from './risks'
 
 export type OperationalAlertSeverity = 'CRITICAL' | 'HIGH' | 'MEDIUM'
 
@@ -18,7 +19,7 @@ const severityWeight: Record<OperationalAlertSeverity, number> = {
 }
 
 export async function resolveOperationalAlerts(prisma: PrismaClient) {
-  const [indicators, nonConformities, correctiveActions] = await Promise.all([
+  const [indicators, nonConformities, correctiveActions, risks, preventiveActions] = await Promise.all([
     prisma.indicator.findMany({
       include: {
         entries: {
@@ -45,6 +46,21 @@ export async function resolveOperationalAlerts(prisma: PrismaClient) {
             id: true,
           },
           take: 1,
+        },
+      },
+      orderBy: { updatedAt: 'desc' },
+      take: 30,
+    }),
+    prisma.risk.findMany({
+      orderBy: { updatedAt: 'desc' },
+      take: 30,
+    }),
+    prisma.preventiveAction.findMany({
+      include: {
+        risk: {
+          select: {
+            nonConformityId: true,
+          },
         },
       },
       orderBy: { updatedAt: 'desc' },
@@ -107,6 +123,36 @@ export async function resolveOperationalAlerts(prisma: PrismaClient) {
       href: `/non-conformities/${nonConformity.id}/edit`,
       occurredAt: nonConformity.updatedAt,
     })
+  }
+
+  for (const risk of risks) {
+    if (['MITIGATED', 'CLOSED'].includes(risk.status)) {
+      continue
+    }
+
+    if (calculateRiskLevel(risk.probability, risk.impact) === 'CRITICAL') {
+      alerts.push({
+        id: `risk-critical-${risk.id}`,
+        severity: 'HIGH',
+        title: 'Risco crítico aberto',
+        description: `${risk.title} exige mitigação prioritária.`,
+        href: `/non-conformities/${risk.nonConformityId}/risks`,
+        occurredAt: risk.updatedAt,
+      })
+    }
+  }
+
+  for (const action of preventiveActions) {
+    if (action.dueAt && !['COMPLETED', 'CANCELLED'].includes(action.status) && action.dueAt.getTime() < now) {
+      alerts.push({
+        id: `preventive-action-overdue-${action.id}`,
+        severity: 'HIGH',
+        title: 'Ação preventiva vencida',
+        description: `${action.title} está com prazo vencido.`,
+        href: `/non-conformities/${action.risk.nonConformityId}/risks`,
+        occurredAt: action.dueAt,
+      })
+    }
   }
 
   return alerts.sort((left, right) => {
