@@ -51,6 +51,7 @@
     "@types/ioredis": "^5.0.0",
     "@types/node": "^24.9.1",
     "@vitest/ui": "^3.2.4",
+    "dotenv": "^17.2.3",
     "prisma": "^6.17.1",
     "typescript": "^5",
     "vitest": "^3.2.4"
