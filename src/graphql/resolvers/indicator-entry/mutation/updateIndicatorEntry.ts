@@ -1,5 +1,5 @@
-import { requireAuth } from '@/lib/auth/guards'
 import type { FieldResolver } from 'nexus'
+import { requireAuth } from '@/lib/auth/guards'
 
 export const updateIndicatorEntry: FieldResolver<'Mutation', 'updateIndicatorEntry'> = async (
   _,

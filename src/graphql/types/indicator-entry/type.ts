@@ -1,4 +1,4 @@
-import { inputObjectType, objectType, enumType } from 'nexus'
+import { enumType, inputObjectType, objectType } from 'nexus'
 import { OrderDirection, Pagination } from '../utils'
 
 export const IndicatorEntry = objectType({
@@ -20,6 +20,23 @@ export const IndicatorEntryList = objectType({
   definition(t) {
     t.list.nonNull.field('nodes', { type: IndicatorEntry })
     t.nonNull.field('pagination', { type: Pagination })
+  },
+})
+
+export const IndicatorEntryCsvImportError = objectType({
+  name: 'IndicatorEntryCsvImportError',
+  definition(t) {
+    t.nonNull.int('row')
+    t.nonNull.string('message')
+  },
+})
+
+export const IndicatorEntryCsvImportResult = objectType({
+  name: 'IndicatorEntryCsvImportResult',
+  definition(t) {
+    t.nonNull.int('importedCount')
+    t.list.nonNull.field('entries', { type: IndicatorEntry })
+    t.list.nonNull.field('errors', { type: IndicatorEntryCsvImportError })
   },
 })
 

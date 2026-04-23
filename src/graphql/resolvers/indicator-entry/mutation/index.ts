@@ -1,3 +1,4 @@
 export * from './createIndicatorEntry'
-export * from './updateIndicatorEntry'
 export * from './deleteIndicatorEntry'
+export * from './importIndicatorEntriesCsv'
+export * from './updateIndicatorEntry'

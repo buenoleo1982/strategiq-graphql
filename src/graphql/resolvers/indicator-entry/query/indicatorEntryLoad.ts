@@ -1,6 +1,6 @@
-import { requireAuth } from '@/lib/auth/guards'
 import type { Prisma } from '@prisma/client'
 import type { FieldResolver } from 'nexus'
+import { requireAuth } from '@/lib/auth/guards'
 
 const getOrderBy = (
   column?: 'ID' | 'INDICATOR_ID' | 'VALUE' | 'COLLECTED_AT' | 'CREATED_AT',
@@ -17,13 +17,16 @@ const getOrderBy = (
       return { collectedAt: sortDirection }
     case 'CREATED_AT':
       return { createdAt: sortDirection }
-    case 'ID':
     default:
       return { id: sortDirection }
   }
 }
 
-export const indicatorEntryLoad: FieldResolver<'Query', 'indicatorEntryLoad'> = async (_, args, ctx) => {
+export const indicatorEntryLoad: FieldResolver<'Query', 'indicatorEntryLoad'> = async (
+  _,
+  args,
+  ctx
+) => {
   requireAuth(ctx)
 
   const where: Prisma.IndicatorEntryWhereInput = {
@@ -39,9 +42,13 @@ export const indicatorEntryLoad: FieldResolver<'Query', 'indicatorEntryLoad'> = 
       : {}),
   }
 
-  const pagination = await ctx.services.pagination.getPagination(ctx.prisma.indicatorEntry, args.pageArgs, {
-    where,
-  })
+  const pagination = await ctx.services.pagination.getPagination(
+    ctx.prisma.indicatorEntry,
+    args.pageArgs,
+    {
+      where,
+    }
+  )
 
   const nodes = await ctx.prisma.indicatorEntry.findMany({
     where,

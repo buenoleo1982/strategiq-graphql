@@ -196,6 +196,17 @@ input IndicatorEntryArgs {
   source: String
 }
 
+type IndicatorEntryCsvImportError {
+  message: String!
+  row: Int!
+}
+
+type IndicatorEntryCsvImportResult {
+  entries: [IndicatorEntry!]
+  errors: [IndicatorEntryCsvImportError!]
+  importedCount: Int!
+}
+
 type IndicatorEntryList {
   nodes: [IndicatorEntry!]
   pagination: Pagination!
@@ -321,6 +332,7 @@ type Mutation {
   deleteRisk(id: Int!): Risk
   deleteStrategicObjective(id: Int!): StrategicObjective
   deleteUser(id: Int!): User
+  importIndicatorEntriesCsv(csvContent: String!, defaultSource: String, indicatorId: Int): IndicatorEntryCsvImportResult
   login(email: String!, password: String!): AuthResponse!
   logout: Boolean!
   refreshToken(refreshToken: String!): AuthTokens!

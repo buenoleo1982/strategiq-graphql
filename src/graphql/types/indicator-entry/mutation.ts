@@ -36,5 +36,15 @@ export const IndicatorEntryMutation = extendType({
       },
       resolve: IndicatorEntryMutationResolvers.deleteIndicatorEntry,
     })
+
+    t.field('importIndicatorEntriesCsv', {
+      type: 'IndicatorEntryCsvImportResult',
+      args: {
+        csvContent: nonNull(stringArg()),
+        indicatorId: intArg(),
+        defaultSource: stringArg(),
+      },
+      resolve: IndicatorEntryMutationResolvers.importIndicatorEntriesCsv,
+    })
   },
 })

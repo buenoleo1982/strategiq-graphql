@@ -21,10 +21,11 @@
     "db:seed": "prisma db seed",
     "e2e:setup": "bun prisma/seed/e2e.ts",
     "schema:generate": "NEXUS_SHOULD_GENERATE_ARTIFACTS=true NODE_ENV=development bun src/graphql/schema.ts",
-    "lint": "biome check --write .",
+    "lint": "biome check .",
+    "lint:ci": "biome check package.json README.md .github/workflows src/graphql/types/indicator-entry src/graphql/resolvers/indicator-entry src/service/indicator-entry-csv.ts src/__tests__/graphql/IndicatorEntryResolvers.test.ts",
     "lint:unsafe": "biome check --write --unsafe .",
     "format": "biome format --write .",
-    "check": "biome check --write . && tsc --noEmit && bun run schema:generate && biome format --write . && bun run test:run",
+    "check": "bun run lint && tsc --noEmit && bun run test:run",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch"
   },

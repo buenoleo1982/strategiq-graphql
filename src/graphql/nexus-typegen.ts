@@ -271,6 +271,15 @@ export interface NexusGenObjects {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     value: number; // Float!
   }
+  IndicatorEntryCsvImportError: { // root type
+    message: string; // String!
+    row: number; // Int!
+  }
+  IndicatorEntryCsvImportResult: { // root type
+    entries?: NexusGenRootTypes['IndicatorEntry'][] | null; // [IndicatorEntry!]
+    errors?: NexusGenRootTypes['IndicatorEntryCsvImportError'][] | null; // [IndicatorEntryCsvImportError!]
+    importedCount: number; // Int!
+  }
   IndicatorEntryList: { // root type
     nodes?: NexusGenRootTypes['IndicatorEntry'][] | null; // [IndicatorEntry!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
@@ -507,6 +516,15 @@ export interface NexusGenFieldTypes {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
     value: number; // Float!
   }
+  IndicatorEntryCsvImportError: { // field return type
+    message: string; // String!
+    row: number; // Int!
+  }
+  IndicatorEntryCsvImportResult: { // field return type
+    entries: NexusGenRootTypes['IndicatorEntry'][] | null; // [IndicatorEntry!]
+    errors: NexusGenRootTypes['IndicatorEntryCsvImportError'][] | null; // [IndicatorEntryCsvImportError!]
+    importedCount: number; // Int!
+  }
   IndicatorEntryList: { // field return type
     nodes: NexusGenRootTypes['IndicatorEntry'][] | null; // [IndicatorEntry!]
     pagination: NexusGenRootTypes['Pagination']; // Pagination!
@@ -558,6 +576,7 @@ export interface NexusGenFieldTypes {
     deleteRisk: NexusGenRootTypes['Risk'] | null; // Risk
     deleteStrategicObjective: NexusGenRootTypes['StrategicObjective'] | null; // StrategicObjective
     deleteUser: NexusGenRootTypes['User'] | null; // User
+    importIndicatorEntriesCsv: NexusGenRootTypes['IndicatorEntryCsvImportResult'] | null; // IndicatorEntryCsvImportResult
     login: NexusGenRootTypes['AuthResponse']; // AuthResponse!
     logout: boolean; // Boolean!
     refreshToken: NexusGenRootTypes['AuthTokens']; // AuthTokens!
@@ -821,6 +840,15 @@ export interface NexusGenFieldTypeNames {
     updatedAt: 'DateTime'
     value: 'Float'
   }
+  IndicatorEntryCsvImportError: { // field return type name
+    message: 'String'
+    row: 'Int'
+  }
+  IndicatorEntryCsvImportResult: { // field return type name
+    entries: 'IndicatorEntry'
+    errors: 'IndicatorEntryCsvImportError'
+    importedCount: 'Int'
+  }
   IndicatorEntryList: { // field return type name
     nodes: 'IndicatorEntry'
     pagination: 'Pagination'
@@ -872,6 +900,7 @@ export interface NexusGenFieldTypeNames {
     deleteRisk: 'Risk'
     deleteStrategicObjective: 'StrategicObjective'
     deleteUser: 'User'
+    importIndicatorEntriesCsv: 'IndicatorEntryCsvImportResult'
     login: 'AuthResponse'
     logout: 'Boolean'
     refreshToken: 'AuthTokens'
@@ -1161,6 +1190,11 @@ export interface NexusGenArgTypes {
     }
     deleteUser: { // args
       id: number; // Int!
+    }
+    importIndicatorEntriesCsv: { // args
+      csvContent: string; // String!
+      defaultSource?: string | null; // String
+      indicatorId?: number | null; // Int
     }
     login: { // args
       email: string; // String!

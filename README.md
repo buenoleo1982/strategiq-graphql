@@ -24,6 +24,7 @@ Hoje o backend já possui:
 - autenticação com `register`, `login`, `refreshToken`, `logout` e `me`
 - contexto autenticado com usuário atual
 - CRUD básico de usuários
+- domínio de objetivos, iniciativas, indicadores, entradas de indicador, NC/CAPA, riscos e evidências
 - integração com Redis para refresh token e blacklist
 - logger estruturado e trace id
 - testes de GraphQL e logger
@@ -119,6 +120,45 @@ http://localhost:4000/graphql
 - `bun run format`
 - `bun run typecheck`
 - `bun run check`
+
+`bun run lint` é seguro para CI e não escreve alterações em disco.
+
+## Importação CSV de indicadores
+
+O backend expõe a mutation `importIndicatorEntriesCsv` para importar lançamentos de indicadores via GraphQL.
+
+Colunas aceitas no CSV:
+
+- `value` obrigatório
+- `collectedAt` opcional
+- `source` opcional
+- `notes` opcional
+- `indicatorId` obrigatório quando não for informado no argumento da mutation
+
+Exemplo:
+
+```graphql
+mutation ImportIndicatorEntriesCsv($csvContent: String!, $indicatorId: Int) {
+  importIndicatorEntriesCsv(csvContent: $csvContent, indicatorId: $indicatorId) {
+    importedCount
+    errors {
+      row
+      message
+    }
+  }
+}
+```
+
+## CI/CD
+
+O repositório possui dois workflows manuais em `.github/workflows`:
+
+- `quality-dispatch.yml`: roda lint, typecheck e testes sob `workflow_dispatch`
+- `container-dispatch.yml`: faz build e push da imagem Docker para `ghcr.io`
+
+A imagem do backend é construída a partir do `Dockerfile` na raiz do repositório.
+
+Veja também: [mvp-readiness.md](/Users/julianostroschon/Documents/Projects/strategic/docs/mvp-readiness.md)
 
 ## Schema GraphQL atual
 
